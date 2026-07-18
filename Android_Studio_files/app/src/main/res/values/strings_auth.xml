@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to buy and sell within the HKU community.</string>
+    <string name="nickname_hint">Nickname</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="whatsapp_hint">WhatsApp number</string>
+    <string name="action_login">Sign in</string>
+    <string name="action_open_sign_up">Create an account</string>
+    <string name="sign_up_title">Create account</string>
+    <string name="sign_up_subtitle">Use a nickname and WhatsApp number for campus handover.</string>
+    <string name="action_sign_up">Create account</string>
+    <string name="action_back_to_login">Back to sign in</string>
+</resources>

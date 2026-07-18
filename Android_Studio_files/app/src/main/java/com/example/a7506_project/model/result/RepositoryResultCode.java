@@ -1,0 +1,17 @@
+package com.example.a7506_project.model.result;
+
+public enum RepositoryResultCode {
+    OK,
+    INVALID_INPUT,
+    DUPLICATE_NICKNAME,
+    INVALID_CREDENTIALS,
+    ITEM_NOT_FOUND,
+    ITEM_NOT_ACTIVE,
+    NOT_OWNER,
+    CANNOT_OFFER_OWN_ITEM,
+    DUPLICATE_PENDING_OFFER,
+    INVALID_PRICE,
+    OFFER_NOT_FOUND,
+    OFFER_NOT_PENDING,
+    DATABASE_ERROR
+}

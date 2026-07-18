@@ -1,0 +1,18 @@
+# Local course source documents; share them separately if the repository is public.
+/COMP7506D_Group_Project_2026.pdf
+/HKU 交易平台 PRD.docx
+/project_docs/archive_pre_master_2026-07-19/
+
+# Local agent and editor state.
+/.codex/
+/.idea/
+*.swp
+
+# Android and Gradle local output.
+**/.gradle/
+**/build/
+**/local.properties
+**/*.iml
+**/captures/
+**/.externalNativeBuild/
+**/.cxx/

@@ -1,0 +1,46 @@
+name: Development task
+description: Track one task ID from the master development plan.
+title: "[TASK-ID] "
+labels:
+  - task
+body:
+  - type: input
+    id: task_id
+    attributes:
+      label: Task ID
+      description: Use one ID from the Phase task tables.
+      placeholder: AUTH-03
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and acceptance criteria
+      description: Copy the deliverable and acceptance criteria from the master plan.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Merged dependencies
+      description: List prerequisite task IDs and their merged PRs.
+    validations:
+      required: true
+  - type: textarea
+    id: file_scope
+    attributes:
+      label: Allowed file scope
+      description: List the files or directories this task may modify.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: Dependencies are merged into main.
+          required: true
+        - label: Frozen contracts and relevant code have been read.
+          required: true
+        - label: Manual verification steps are defined.
+          required: true

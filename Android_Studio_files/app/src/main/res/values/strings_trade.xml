@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_make_offer">Make offer</string>
+    <string name="action_buy_now">Buy now</string>
+    <string name="offer_amount_hint">Offer amount (HKD)</string>
+    <string name="management_title">Management</string>
+    <string name="tab_my_listings">My Listings</string>
+    <string name="tab_my_activity">My Activity</string>
+    <string name="empty_management">Nothing to show here yet</string>
+    <string name="offer_review_title">Offers</string>
+    <string name="empty_offers">No offers yet</string>
+    <string name="sample_status">Status</string>
+    <string name="sample_offer_count">0 offers</string>
+    <string name="sample_buyer">Buyer</string>
+    <string name="sample_offer_type">Offer type</string>
+    <string name="action_accept_offer">Accept</string>
+    <string name="sample_activity_item">Item</string>
+    <string name="sample_whatsapp">WhatsApp available after confirmation</string>
+</resources>
