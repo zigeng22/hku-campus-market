@@ -1,25 +1,104 @@
 package com.example.a7506_project.ui.management;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a7506_project.R;
+import com.example.a7506_project.contract.AppContract;
+import com.example.a7506_project.data.MarketRepository;
+import com.example.a7506_project.data.RepositoryProvider;
+import com.example.a7506_project.model.ItemCard;
+import com.example.a7506_project.model.ParticipationSummary;
+import com.example.a7506_project.ui.item.ItemDetailActivity;
+import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.List;
 
 public class ManagementActivity extends AppCompatActivity {
+
+    private MarketRepository repo;
+    private long currentUserId;
+    private RecyclerView recycler;
+    private TextView textEmpty;
+
+    private ListingAdapter listingAdapter;
+    private ParticipationAdapter participationAdapter;
+    private int currentTab = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_management);
 
+        repo = RepositoryProvider.get(this);
+        currentUserId = new SessionManager(this).getCurrentUserId();
+
         MaterialToolbar toolbar = findViewById(R.id.toolbarManagement);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         toolbar.setNavigationOnClickListener(view -> finish());
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerManagement);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        textEmpty = findViewById(R.id.textEmptyManagement);
+
+        recycler = findViewById(R.id.recyclerManagement);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        listingAdapter = new ListingAdapter();
+        listingAdapter.setOnListingClickListener(this::openItemDetail);
+        participationAdapter = new ParticipationAdapter();
+
+        TabLayout tabLayout = findViewById(R.id.tabManagement);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                currentTab = tab.getPosition();
+                loadTabContent();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        loadTabContent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTabContent();
+    }
+
+    private void loadTabContent() {
+        if (currentTab == 0) {
+            // My Listings
+            List<ItemCard> listings = repo.getListingsBySeller(currentUserId);
+            recycler.setAdapter(listingAdapter);
+            listingAdapter.setItems(listings);
+            textEmpty.setVisibility(listings.isEmpty() ? View.VISIBLE : View.GONE);
+        } else {
+            // My Activity
+            List<ParticipationSummary> activities = repo.getBuyerActivity(currentUserId);
+            recycler.setAdapter(participationAdapter);
+            participationAdapter.setItems(activities);
+            textEmpty.setVisibility(activities.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void openItemDetail(ItemCard item) {
+        Intent intent = new Intent(this, ItemDetailActivity.class);
+        intent.putExtra(AppContract.EXTRA_ITEM_ID, item.getItemId());
+        startActivity(intent);
     }
 }

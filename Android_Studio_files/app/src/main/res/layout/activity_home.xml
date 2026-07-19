@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:title="@string/home_title"
+        app:menu="@menu/toolbar_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
