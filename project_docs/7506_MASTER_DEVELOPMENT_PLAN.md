@@ -177,7 +177,8 @@ Firebase、聊天、通知、支付、地图、评分、举报、推荐、管理
 - 已创建冻结的数据模型、Repository 接口、状态/数据库常量和结果类型。
 - 已创建全部 Activity/XML 页面骨架、固定 View ID、Manifest 注册和 Session 启动路由。
 - 本地 Git `main` 仓库、根目录 `.gitignore`、PR 模板和任务 Issue 模板已建立。
-- GitHub remote、首次 push 和 main branch protection 尚未配置，需要仓库 URL 和小组 GitHub 权限。
+- GitHub remote 已配置为 `https://github.com/zigeng22/hku-campus-market.git`，首次 push 已完成并验证本地与远程 `main` 一致。
+- 本课程项目不启用 GitHub 强制 branch protection；分支与 PR 要求作为小组协作约定执行，降低四人小组的配置和维护成本。
 
 Phase 0 验证记录：
 
@@ -647,6 +648,7 @@ stateDiagram-v2
 
 ### 8.4 Git/GitHub 工作方式
 
+- 仓库不要求配置 GitHub branch protection/ruleset；以下规则由组员共同遵守并由当日集成人检查。
 - `main`：必须始终可编译，禁止直接开发。
 - 分支命名：`feat/AUTH-03-login-flow`、`fix/TRADE-05-atomic-accept`、`docs/DOC-02-report`。
 - 一个分支只处理一个任务编号；如果任务过大，先拆任务。
@@ -792,7 +794,7 @@ flowchart LR
 
 | ID | 状态 | 任务 | 依赖 | 交付物与验收 |
 |---|---|---|---|---|
-| GOV-01 | IN PROGRESS | 建立 Git 仓库/远程仓库和 main 分支规则 | 无 | 本地 main 和 `.gitignore` 已完成；待创建 GitHub remote、首次 push 和 branch protection |
+| GOV-01 | DONE | 建立 Git 仓库、远程仓库和轻量协作规则 | 无 | 本地/远程 `main`、`.gitignore` 和首次 push 已完成；经小组决策不启用强制 branch protection，使用分支、PR 和集成人检查约定 |
 | GOV-02 | DONE | 建立基线构建记录 | 无 | 当前空项目 `assembleDebug` 成功，记录 JDK/Android SDK/模拟器版本 |
 | GOV-03 | DONE | 建立任务看板和 PR 模板 | GOV-01 | 主计划任务表作为基线看板；GitHub PR/Issue 模板已建立 |
 | CONTRACT-01 | DONE | 创建模型、AppContract、Repository 公共签名和结果码 | GOV-02 | 所有 Java stub 可编译；字段/签名与第 5 节一致 |
@@ -1180,13 +1182,13 @@ Logcat 中从 FATAL EXCEPTION 开始的完整堆栈：[粘贴]
 
 第一批本地任务已于 2026-07-19 完成；上传 GitHub 后按以下顺序核对并合并：
 
-1. `GOV-01`：本地 Git 已完成；待配置远程仓库和 main branch protection。
+1. `GOV-01`：已完成本地 Git、GitHub remote 和首次 push；项目不启用强制 branch protection，按第 8.4 节执行轻量协作规则。
 2. `GOV-02`：已完成空工程基线构建。
 3. `ARCH-01`：已完成 RecyclerView 与 package 骨架。
 4. `CONTRACT-01`：已创建并冻结模型、常量、结果类型和 Repository 接口。
 5. `CONTRACT-02`：已按固定 View ID 创建并编译页面 skeleton。
 6. `ARCH-02`：已创建 Activity、Manifest、Session 路由和页面导航。
 
-当前验收结果是：工程可编译、公共接口已冻结、页面骨架和导航已连接。上传 GitHub 并完成 `GOV-01` 后，UI 与数据成员可以在不修改同一文件的情况下分别开始 `UI-01/UI-02` 与 `AUTH-01`。
+当前验收结果是：工程可编译、公共接口已冻结、页面骨架和导航已连接，GitHub 远程仓库和 `GOV-01` 已完成。UI 与数据成员可以在不修改同一文件的情况下分别开始 `UI-01/UI-02` 与 `AUTH-01`。
 
 在这之前不要并行实现交易逻辑，也不要让 Agent 生成完整数据库和全部页面。契约先稳定，后续速度才会真正提高。
