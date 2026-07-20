@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="auth_brand">HKU CAMPUS MARKET</string>
     <string name="login_title">Welcome back</string>
     <string name="login_subtitle">Sign in to buy and sell within the HKU community.</string>
     <string name="nickname_hint">Nickname</string>

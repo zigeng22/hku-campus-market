@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_title">Campus Market</string>
-    <string name="search_items_hint">Search items</string>
+    <string name="home_toolbar_subtitle">HKU student marketplace</string>
+    <string name="search_items_hint">Search books, electronics, and more</string>
     <string name="clear_search_description">Clear search</string>
-    <string name="empty_items">No active items yet</string>
+    <string name="home_section_title">Fresh listings</string>
+    <string name="home_section_order">Newest first</string>
+    <string name="empty_items">No items found\nTry another search or post the first listing</string>
     <string name="post_item_description">Post an item</string>
     <string name="open_management_description">Open management center</string>
     <string name="post_item_title">Post item</string>
@@ -16,12 +19,12 @@
     <string name="save_item">Save item</string>
     <string name="item_image_description">Item image</string>
     <string name="item_detail_title">Item details</string>
-    <string name="sample_item_name">Item name</string>
-    <string name="sample_item_price">HK$0.00</string>
-    <string name="sample_item_category">Category</string>
+    <string name="sample_item_name">Data Structures Textbook</string>
+    <string name="sample_item_price">HK$120.00</string>
+    <string name="sample_item_category">Books</string>
     <string name="sample_item_description">Item description</string>
-    <string name="sample_seller">Seller</string>
-    <string name="seller_prefix">Seller: %1$s</string>
+    <string name="sample_seller">Seller · Alex</string>
+    <string name="seller_prefix">Seller · %1$s</string>
     <string name="action_edit_item">Edit</string>
     <string name="action_delete_item">Delete</string>
     <string name="action_view_offers">View offers</string>

@@ -1,8 +1,41 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
     <style name="Base.Theme._7506_project" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
+        <item name="colorSecondary">@color/brand_sky</item>
+        <item name="colorOnSecondary">@color/on_sky</item>
+        <item name="colorSecondaryContainer">@color/sky_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_sky_container</item>
+        <item name="colorTertiary">@color/brand_brick</item>
+        <item name="colorOnTertiary">@color/on_brick</item>
+        <item name="colorTertiaryContainer">@color/brick_container</item>
+        <item name="colorOnTertiaryContainer">@color/on_brick_container</item>
+        <item name="colorError">@color/status_error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outline_variant</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.HkuMarket.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.HkuMarket.MediumComponent</item>
+        <item name="materialButtonStyle">@style/Widget.HkuMarket.Button</item>
+        <item name="textInputStyle">@style/Widget.HkuMarket.TextInputLayout</item>
+        <item name="toolbarStyle">@style/Widget.HkuMarket.Toolbar</item>
+        <item name="materialCardViewStyle">@style/Widget.HkuMarket.Card</item>
+        <item name="floatingActionButtonStyle">@style/Widget.HkuMarket.FloatingActionButton</item>
+
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/app_background</item>
+        <item name="android:statusBarColor">@color/brand_primary_dark</item>
+        <item name="android:navigationBarColor">@color/app_background</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="Theme._7506_project" parent="Base.Theme._7506_project" />

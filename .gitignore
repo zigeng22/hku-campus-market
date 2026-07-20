@@ -16,3 +16,6 @@
 **/captures/
 **/.externalNativeBuild/
 **/.cxx/
+
+/Android_Studio_files/.idea/*
+!/Android_Studio_files/.idea/.gitignore
