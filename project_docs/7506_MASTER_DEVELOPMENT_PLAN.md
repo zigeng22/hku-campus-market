@@ -1,8 +1,8 @@
 # HKU Campus Market：COMP7506D 小组项目总开发计划
 
 > 文档状态：唯一有效开发基线（Single Source of Truth）
-> 版本：1.0
-> 最后更新：2026-07-19
+> 版本：1.1
+> 最后更新：2026-07-20
 > Android 工程：`E:\7506_project\Android_Studio_files`
 > 适用对象：4 人小组、Codex/其他代码 Agent、代码审查者、测试与演示负责人
 
@@ -168,7 +168,7 @@ Firebase、聊天、通知、支付、地图、评分、举报、推荐、管理
 
 ### 3.3 当前工程状态
 
-截至 2026-07-19，Phase 0 本地工程基础已经完成：
+截至 2026-07-20，Phase 0 工程基础已经完成；远程 `main` 上的首批业务实现也已拉取并进入接收审查：
 
 - 包名：`com.example.a7506_project`
 - Java 11、minSdk 24、targetSdk 36。
@@ -191,6 +191,17 @@ Phase 0 验证记录：
 | `testDebugUnitTest` | PASS |
 | `lintDebug` | PASS，0 errors；剩余 warning 为预建但尚未接 Adapter 的资源及刻意保留的 SDK/AGP 版本提示 |
 | 固定 View ID 检查 | 63/63 present |
+
+2026-07-20 远程实现接收记录：
+
+| 项目 | 结果 |
+|---|---|
+| 接收提交 | `24c9050`：数据层、Activity 和 Adapter；`46bcd07`：队友完成报告 |
+| `assembleDebug` | PASS |
+| `testDebugUnitTest` | PASS，但只运行 1 个模板测试；业务测试仍为 0 |
+| `lintDebug` | PASS，0 errors、17 warnings |
+| 设备/E2E | 当前无在线模拟器或设备，未独立验证 Alice/Bob 主流程 |
+| 接收结论 | 代码已形成大范围可编译实现，但存在业务与契约缺口；相关任务先标记 `IN PROGRESS`，修复并补测试后才能改为 `DONE` |
 
 为降低风险，P0 不修改 applicationId 和 namespace。App 显示名称可以改，包名在最终提交后也无需再改。
 
@@ -808,10 +819,10 @@ flowchart LR
 |---|---|---|---|---|
 | UI-01 | TODO | 统一颜色、字体层级、间距、按钮和输入框风格 | CONTRACT-02 | Login/Home 在 360x800 无截断；日夜主题不 crash |
 | UI-02 | TODO | 完成 Login/Sign Up XML | CONTRACT-02, UI-01 | 键盘类型、密码隐藏、error 区域和 loading 状态齐全 |
-| AUTH-01 | TODO | 实现 `users` schema、PasswordHasher、用户模型映射 | CONTRACT-01 | 注册数据持久化；数据库不保存明文密码 |
-| AUTH-02 | TODO | 实现 SessionManager 与 MainActivity 路由 | ARCH-02 | 重启保持登录；logout 清栈；失效 userId 自动退出 |
-| AUTH-03 | TODO | 实现注册校验和唯一昵称 | AUTH-01, UI-02 | 合法注册成功；空值、重复昵称、密码不一致、WhatsApp 非法均有明确提示 |
-| AUTH-04 | TODO | 实现登录/退出流程 | AUTH-01, AUTH-02, UI-02 | 正确密码登录；错误密码失败；退出后 Back 不回 Home |
+| AUTH-01 | IN PROGRESS | 实现 `users` schema、PasswordHasher、用户模型映射 | CONTRACT-01 | `24c9050` 已实现 schema、PBKDF2 和映射；待 Repository 测试及设备持久化验证 |
+| AUTH-02 | IN PROGRESS | 实现 SessionManager 与 MainActivity 路由 | ARCH-02 | 登录状态和清栈已实现；失效 userId 尚未在启动路由中清除 |
+| AUTH-03 | IN PROGRESS | 实现注册校验和唯一昵称 | AUTH-01, UI-02 | 注册与唯一昵称逻辑已实现；WhatsApp 非数字的字段级提示及重复插入异常处理待修复，测试缺失 |
+| AUTH-04 | IN PROGRESS | 实现登录/退出流程 | AUTH-01, AUTH-02, UI-02 | 登录、退出和清栈代码已连接；待设备验证及 AUTH-02 失效 session 修复 |
 | TEST-AUTH-01 | TODO | Validators/密码/Repository 认证测试 | AUTH-03, AUTH-04 | 覆盖成功、边界、重复昵称和错误凭证 |
 
 ### Phase 2：商品发布、首页和详情
@@ -821,13 +832,13 @@ flowchart LR
 | UI-03 | TODO | Home、row_item、空状态 XML | CONTRACT-02, UI-01 | 列表、搜索、FAB、空状态在两种尺寸无重叠 |
 | UI-04 | TODO | Post/Edit Item XML | CONTRACT-02, UI-01 | 表单可滚动；键盘不遮挡保存；图片占位稳定 |
 | UI-05 | TODO | Item Detail XML 与买卖双方 action group | CONTRACT-02, UI-01 | 两组操作互斥；长标题/描述不溢出 |
-| ITEM-01 | TODO | 实现 items schema、索引和 Item 映射 | AUTH-01 | CRUD 数据可持久化；金额使用 cents；FK 开启 |
-| ITEM-02 | TODO | 实现 create/update/softDelete/getItem | ITEM-01 | 非 owner 无法修改；SOLD/DELETED 无法编辑 |
-| ITEM-03 | TODO | 实现 ACTIVE 搜索、seller listings 和 ItemCard 查询 | ITEM-01 | 大小写不敏感搜索 name/description；只返回 ACTIVE；排序稳定 |
-| ITEM-04 | TODO | 实现 HomeActivity 和 ItemAdapter | UI-03, ITEM-03, AUTH-04 | onResume 刷新；搜索和空状态正确；卡片可进详情 |
-| ITEM-05 | TODO | 实现 PostEditItemActivity 表单与金额转换 | UI-04, ITEM-02 | 新建和编辑复用页面；非法价格不写库 |
-| ITEM-06 | TODO | 实现相册选择和 URI 持久化 | ITEM-05 | 选图后重启仍可读；失败时显示默认图且不 crash |
-| ITEM-07 | TODO | 实现 ItemDetailActivity 身份视图 | UI-05, ITEM-02 | seller 与 buyer 按钮正确；删除有确认；返回后首页刷新 |
+| ITEM-01 | IN PROGRESS | 实现 items schema、索引和 Item 映射 | AUTH-01 | schema、FK 和映射已实现；缺少计划要求的复合索引/部分 CHECK 约束，待数据测试 |
+| ITEM-02 | IN PROGRESS | 实现 create/update/softDelete/getItem | ITEM-01 | CRUD、owner 和 ACTIVE 条件已实现；待 Repository 权限、状态和异常路径测试 |
+| ITEM-03 | IN PROGRESS | 实现 ACTIVE 搜索、seller listings 和 ItemCard 查询 | ITEM-01 | ACTIVE/name/category/sort 和 listings 已实现；搜索尚未覆盖 description |
+| ITEM-04 | IN PROGRESS | 实现 HomeActivity 和 ItemAdapter | UI-03, ITEM-03, AUTH-04 | onResume、搜索、空状态和详情导航已连接；待 ITEM-03 修复及设备验收 |
+| ITEM-05 | IN PROGRESS | 实现 PostEditItemActivity 表单与金额转换 | UI-04, ITEM-02 | 新建/编辑表单和金额转换已连接；待边界测试、设备验收及可见文本资源化 |
+| ITEM-06 | IN PROGRESS | 实现相册选择和 URI 持久化 | ITEM-05 | `OpenDocument` 和持久权限已实现；不可读 URI/权限异常的占位图与防 crash 处理缺失 |
+| ITEM-07 | IN PROGRESS | 实现 ItemDetailActivity 身份视图 | UI-05, ITEM-02 | seller/buyer action、编辑、删除和 offer 导航已连接；待状态与设备验收 |
 | TEST-ITEM-01 | TODO | 商品 Repository 和金额/搜索测试 | ITEM-02, ITEM-03 | 覆盖 CRUD、owner 权限、状态过滤、空关键字和价格边界 |
 
 ### Phase 3：报价、成交与管理中心
@@ -836,14 +847,14 @@ flowchart LR
 |---|---|---|---|---|
 | UI-06 | TODO | Make Offer Dialog 与 row_offer XML | UI-01, UI-05 | 金额输入、类型、状态和 Accept 布局清楚 |
 | UI-07 | TODO | Management/Listing/Participation layouts | UI-01, CONTRACT-02 | 两个 Tab、三种 row、空状态和联系方式布局完整 |
-| TRADE-01 | TODO | 实现 offers/trade_transactions schema 与索引 | ITEM-01 | FK、唯一 item transaction 和查询索引正确 |
-| TRADE-02 | TODO | 实现 placeOffer/Buy Now 规则 | TRADE-01, ITEM-02 | 不能买自己商品；只能 ACTIVE；Buy Now 金额等于标价；阻止重复 Pending |
-| TRADE-03 | TODO | 在 ItemDetail 连接 Offer Dialog/Buy Now | UI-06, TRADE-02 | 成功/失败提示明确；提交后按钮/状态正确刷新 |
-| TRADE-04 | TODO | 实现 seller offer list 查询与 OfferReviewActivity | UI-06, TRADE-01 | 非 owner 被拒绝；Pending 才显示 Accept |
-| TRADE-05 | TODO | 实现原子 acceptOffer 事务 | TRADE-01, ITEM-02 | 第 6.4 节全部步骤原子完成；重复接受安全失败 |
-| TRADE-06 | TODO | 实现 My Listings 数据与列表交互 | UI-07, ITEM-03, TRADE-04 | 显示状态/报价数；点击进入正确页面 |
-| TRADE-07 | TODO | 实现 My Activity 和成交联系人查询 | UI-07, TRADE-05 | Pending/Rejected 不显示号码；Accepted 显示对方 WhatsApp |
-| TRADE-08 | TODO | 完成 ManagementActivity Tab 切换 | TRADE-06, TRADE-07 | onResume 刷新；切换 Tab 不复用错误数据/adapter |
+| TRADE-01 | IN PROGRESS | 实现 offers/trade_transactions schema 与索引 | ITEM-01 | 两张表、FK、唯一交易和部分索引已实现；计划要求的查询索引/部分 CHECK 约束待补齐 |
+| TRADE-02 | IN PROGRESS | 实现 placeOffer/Buy Now 规则 | TRADE-01, ITEM-02 | ACTIVE、自购、正金额和重复 Pending 已实现；Repository 未强制 Buy Now 金额等于商品标价 |
+| TRADE-03 | IN PROGRESS | 在 ItemDetail 连接 Offer Dialog/Buy Now | UI-06, TRADE-02 | Offer/Buy Now 已连接；Buy Now 仍要求用户输入任意金额，须随 TRADE-02 修复 |
+| TRADE-04 | IN PROGRESS | 实现 seller offer list 查询与 OfferReviewActivity | UI-06, TRADE-01 | seller 查询、列表和 Pending Accept 已实现；非 owner 只返回空列表，待明确拒绝反馈和测试 |
+| TRADE-05 | IN PROGRESS | 实现原子 acceptOffer 事务 | TRADE-01, ITEM-02 | 六步 transaction 已实现且可编译；原子回滚、重复接受和权限测试尚未建立 |
+| TRADE-06 | IN PROGRESS | 实现 My Listings 数据与列表交互 | UI-07, ITEM-03, TRADE-04 | 状态、报价数和详情导航已实现；`ItemCard` 被未授权扩展 status/offerCount，需单独处理契约一致性 |
+| TRADE-07 | IN PROGRESS | 实现 My Activity 和成交联系人查询 | UI-07, TRADE-05 | 查询和 Adapter 已实现但存在隐私 blocker：同商品其他报价可能被标为成交，且无号码时 UI 仍显示示例号码 |
+| TRADE-08 | IN PROGRESS | 完成 ManagementActivity Tab 切换 | TRADE-06, TRADE-07 | Tab、Adapter 切换和 onResume 已实现；须先修复 TRADE-07 并做设备回归 |
 | TEST-TRADE-01 | TODO | 报价规则测试 | TRADE-02 | 自购、非法金额、重复报价、非 ACTIVE 均覆盖 |
 | TEST-TRADE-02 | TODO | 原子成交和权限测试 | TRADE-05, TRADE-07 | 一笔 ACCEPTED、一笔 transaction、其余 REJECTED、item SOLD；失败时无半成品 |
 
@@ -870,6 +881,32 @@ flowchart LR
 | VIDEO-01 | TODO | 1-2 分钟脚本和分镜 | INT-01 | 在时限内覆盖问题、核心流程、差异和结果 |
 | VIDEO-02 | TODO | 录制、剪辑、复核 | VIDEO-01, FREEZE-01 | 字幕可读、无隐私信息、画面不卡顿、时长合规 |
 | SUBMIT-01 | TODO | 最终提交检查 | DOC-02, DOC-03, VIDEO-02 | 文档、视频、source+README 均可打开；从提交包能构建 |
+
+### 12.1 2026-07-20 队友实现接收审查
+
+来源：`finekiss` 的提交 `24c9050` 和说明提交 `46bcd07`。`TASK_COMPLETION_REPORT.md` 保留为成员贡献记录，但任务状态只以本主计划和验收结果为准。
+
+已确认的实现范围：
+
+- 新增 `DatabaseHelper`、`MarketRepositoryImpl`、`RepositoryProvider`，建立 4 张表并实现全部 Repository 方法。
+- 新增密码、校验和金额工具类。
+- 连接 Login、Sign Up、Home、Post/Edit、Item Detail、Offer Review、Management 页面。
+- 新增首页、卖家商品、报价和买家活动 4 个 RecyclerView Adapter。
+- 工程可以编译，lint 无 error。
+
+合并后必须优先处理的验收缺口：
+
+1. `TRADE-07`：只允许 accepted offer 对应买家看到卖家 WhatsApp；Pending/Rejected 必须隐藏联系人，禁止显示示例号码。
+2. `TRADE-02/03`：Buy Now 必须由 Repository 强制使用商品标价，UI 不允许提交任意金额。
+3. `ITEM-03`：搜索同时覆盖 name 和 description，并补稳定排序测试。
+4. `AUTH-02`：启动时验证 session userId 仍存在，不存在时清 session 回 Login。
+5. `ITEM-06`：不可读/失效图片 URI 必须回退占位图且不得 crash。
+6. `ITEM-01/TRADE-01`：按第 6 节核对 CHECK 约束和复合索引。
+7. `TRADE-06/CONTRACT-01`：处理 `ItemCard` 新增 status/offerCount 的未授权冻结契约变更；不得继续扩散第二套模型。
+8. `AUTH-03/INT-03`：补字段级校验、数据库异常映射，并把 Java/XML 中新增可见硬编码文本迁移到 string resources。
+9. `TEST-AUTH-01`、`TEST-ITEM-01`、`TEST-TRADE-01/02`：当前业务测试为 0，必须在宣告功能完成前补齐。
+
+在以上 blocker 修复并完成设备 E2E 前，`INT-01/02/03` 保持 `TODO`；不得仅依据个人完成报告改为 `DONE`。
 
 ---
 
@@ -1178,17 +1215,20 @@ Logcat 中从 FATAL EXCEPTION 开始的完整堆栈：[粘贴]
 
 ---
 
-## 20. 第一批立即执行任务
+## 20. 当前立即执行任务
 
-第一批本地任务已于 2026-07-19 完成；上传 GitHub 后按以下顺序核对并合并：
+Phase 0 已完成。2026-07-20 已从 GitHub 拉取 `finekiss` 的首批业务实现；当前重点从“继续生成完整功能”切换为“审查、修复、测试和集成”。
 
-1. `GOV-01`：已完成本地 Git、GitHub remote 和首次 push；项目不启用强制 branch protection，按第 8.4 节执行轻量协作规则。
-2. `GOV-02`：已完成空工程基线构建。
-3. `ARCH-01`：已完成 RecyclerView 与 package 骨架。
-4. `CONTRACT-01`：已创建并冻结模型、常量、结果类型和 Repository 接口。
-5. `CONTRACT-02`：已按固定 View ID 创建并编译页面 skeleton。
-6. `ARCH-02`：已创建 Activity、Manifest、Session 路由和页面导航。
+按以下顺序执行，每次只向 Agent 分配一个任务 ID：
 
-当前验收结果是：工程可编译、公共接口已冻结、页面骨架和导航已连接，GitHub 远程仓库和 `GOV-01` 已完成。UI 与数据成员可以在不修改同一文件的情况下分别开始 `UI-01/UI-02` 与 `AUTH-01`。
+1. `TRADE-07`：先修复联系人越权显示和示例号码泄露，这是当前最高优先级 blocker。
+2. `TRADE-02`，然后 `TRADE-03`：由 Repository 固定 Buy Now 标价，再修 UI 流程。
+3. `ITEM-03`：补 description 搜索与查询测试。
+4. `AUTH-02`：补失效 session userId 的启动清理。
+5. `ITEM-06`：补图片 URI 失效和权限异常回退。
+6. `ITEM-01/TRADE-01`：核对 schema 约束和索引；如需升级 schema，建立明确 migration 决策。
+7. `AUTH-03/INT-03`：统一校验、错误映射和 string resources。
+8. `TEST-AUTH-01`、`TEST-ITEM-01`、`TEST-TRADE-01/02`：为上述实现建立回归保护。
+9. `INT-01`：在模拟器上从清空 App Data 开始跑完整 Alice/Bob 流程并记录结果。
 
-在这之前不要并行实现交易逻辑，也不要让 Agent 生成完整数据库和全部页面。契约先稳定，后续速度才会真正提高。
+UI 成员可以并行处理 `UI-01` 至 `UI-07`，但不得修改 Repository、schema、冻结 View ID 或状态常量。其他成员不要再次生成整套数据库或全部 Activity；必须基于 `24c9050` 的现有代码做小范围、可验证修复。
