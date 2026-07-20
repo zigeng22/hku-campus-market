@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="brand_primary">#2457C5</color>
+    <color name="brand_primary_dark">#183F96</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#DCE6FF</color>
+    <color name="on_primary_container">#0B2C67</color>
+
+    <color name="brand_sky">#2298C7</color>
+    <color name="on_sky">#FFFFFF</color>
+    <color name="sky_container">#D7F1FA</color>
+    <color name="on_sky_container">#073B4C</color>
+
+    <color name="brand_brick">#B84C3A</color>
+    <color name="on_brick">#FFFFFF</color>
+    <color name="brick_container">#FFE1DA</color>
+    <color name="on_brick_container">#6E2015</color>
+
+    <color name="brand_gold">#D99B24</color>
+    <color name="status_success">#247A5A</color>
+    <color name="status_error">#B3261E</color>
+
+    <color name="app_background">#F7F9FC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#E9EDF3</color>
+    <color name="text_primary">#1B1F2A</color>
+    <color name="text_secondary">#606775</color>
+    <color name="outline">#737A86</color>
+    <color name="outline_variant">#D7DCE5</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

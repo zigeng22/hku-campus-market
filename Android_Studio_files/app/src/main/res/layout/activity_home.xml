@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".ui.home.HomeActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarHome"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/home_toolbar_height"
+        android:background="@color/brand_primary"
         android:minHeight="?attr/actionBarSize"
         android:title="@string/home_title"
+        app:contentInsetStartWithNavigation="@dimen/space_medium"
         app:menu="@menu/toolbar_home"
+        app:subtitle="@string/home_toolbar_subtitle"
+        app:subtitleTextColor="@color/primary_container"
+        app:titleTextAppearance="@style/TextAppearance.HkuMarket.ToolbarTitle"
+        app:titleTextColor="@color/on_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutSearch"
+        style="@style/Widget.HkuMarket.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_medium"
-        android:layout_marginTop="@dimen/space_small"
+        android:layout_marginTop="@dimen/space_medium"
         android:layout_marginEnd="@dimen/space_small"
         android:hint="@string/search_items_hint"
+        app:boxBackgroundColor="@color/surface"
+        app:startIconDrawable="@drawable/ic_search_24"
+        app:startIconTint="@color/text_secondary"
         app:layout_constraintEnd_toStartOf="@id/buttonClearSearch"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarHome">
@@ -43,41 +55,82 @@
         android:layout_marginEnd="@dimen/space_medium"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/clear_search_description"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:padding="@dimen/space_compact"
+        android:src="@drawable/ic_close_24"
+        app:tint="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="@id/layoutSearch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/layoutSearch" />
+
+    <TextView
+        android:id="@+id/textListingsHeading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_medium"
+        android:layout_marginTop="@dimen/space_large"
+        android:text="@string/home_section_title"
+        android:textAppearance="@style/TextAppearance.HkuMarket.SectionTitle"
+        app:layout_constraintEnd_toStartOf="@id/textListingsOrder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+
+    <TextView
+        android:id="@+id/textListingsOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:text="@string/home_section_order"
+        android:textAppearance="@style/TextAppearance.HkuMarket.Metadata"
+        app:layout_constraintBaseline_toBaselineOf="@id/textListingsHeading"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:padding="@dimen/space_medium"
-        android:paddingBottom="88dp"
+        android:paddingStart="@dimen/space_medium"
+        android:paddingTop="@dimen/space_compact"
+        android:paddingEnd="@dimen/space_medium"
+        android:paddingBottom="@dimen/home_list_bottom_padding"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+        app:layout_constraintTop_toBottomOf="@id/textListingsHeading"
+        app:layout_constraintVertical_bias="1.0"
+        tools:itemCount="4"
+        tools:listitem="@layout/row_item" />
 
     <TextView
         android:id="@+id/textEmptyItems"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_marginEnd="@dimen/page_padding"
+        android:drawablePadding="@dimen/space_medium"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
         android:text="@string/empty_items"
+        android:textAppearance="@style/TextAppearance.HkuMarket.EmptyState"
+        app:drawableTopCompat="@drawable/ic_empty_market"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+        app:layout_constraintTop_toBottomOf="@id/textListingsHeading"
+        tools:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabManagement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_medium"
+        android:layout_marginEnd="@dimen/space_compact"
         android:layout_marginBottom="@dimen/space_medium"
         android:contentDescription="@string/open_management_description"
-        android:src="@android:drawable/ic_menu_manage"
+        android:src="@drawable/ic_dashboard_24"
+        app:backgroundTint="@color/brand_sky"
+        app:tint="@color/on_sky"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fabPostItem" />
 
@@ -88,7 +141,9 @@
         android:layout_marginEnd="@dimen/space_medium"
         android:layout_marginBottom="@dimen/space_medium"
         android:contentDescription="@string/post_item_description"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/ic_add_24"
+        app:backgroundTint="@color/brand_primary"
+        app:tint="@color/on_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

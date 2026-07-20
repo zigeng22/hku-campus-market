@@ -1,65 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.HkuMarket.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/space_small"
+    android:layout_marginBottom="@dimen/space_compact"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="8dp">
+    app:cardUseCompatPadding="false">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="104dp"
-        android:orientation="horizontal"
-        android:padding="@dimen/space_small">
+        android:minHeight="@dimen/home_item_min_height"
+        android:padding="@dimen/space_compact">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageItemThumbnail"
             android:layout_width="@dimen/row_image_size"
             android:layout_height="@dimen/row_image_size"
+            android:background="@drawable/bg_item_image"
             android:contentDescription="@string/item_image_description"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:src="@drawable/ic_item_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.HkuMarket.ItemImage" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textRowItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_medium"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginStart="@dimen/space_compact"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sample_item_name"
+            android:textAppearance="@style/TextAppearance.HkuMarket.ItemTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageItemThumbnail"
+            app:layout_constraintTop_toTopOf="@id/imageItemThumbnail" />
 
-            <TextView
-                android:id="@+id/textRowItemName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="@string/sample_item_name"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+        <TextView
+            android:id="@+id/textRowItemPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_compact"
+            android:layout_marginTop="@dimen/space_extra_small"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/sample_item_price"
+            android:textAppearance="@style/TextAppearance.HkuMarket.ItemPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageItemThumbnail"
+            app:layout_constraintTop_toBottomOf="@id/textRowItemName" />
 
-            <TextView
-                android:id="@+id/textRowItemPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/sample_item_price"
-                android:textAppearance="?attr/textAppearanceTitleSmall" />
+        <TextView
+            android:id="@+id/textRowItemCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_compact"
+            android:layout_marginTop="@dimen/space_small"
+            android:background="@drawable/bg_category_chip"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="@dimen/space_small"
+            android:paddingTop="2dp"
+            android:paddingEnd="@dimen/space_small"
+            android:paddingBottom="2dp"
+            android:text="@string/sample_item_category"
+            android:textAppearance="@style/TextAppearance.HkuMarket.Category"
+            app:layout_constraintStart_toEndOf="@id/imageItemThumbnail"
+            app:layout_constraintTop_toBottomOf="@id/textRowItemPrice" />
 
-            <TextView
-                android:id="@+id/textRowItemCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="@string/sample_item_category" />
-
-            <TextView
-                android:id="@+id/textRowSeller"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="@string/sample_seller" />
-        </LinearLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textRowSeller"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_small"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/sample_seller"
+            android:textAppearance="@style/TextAppearance.HkuMarket.Metadata"
+            app:layout_constraintBottom_toBottomOf="@id/textRowItemCategory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/textRowItemCategory"
+            app:layout_constraintTop_toTopOf="@id/textRowItemCategory"
+            tools:text="Seller · Alex" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

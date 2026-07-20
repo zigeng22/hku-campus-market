@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="space_extra_small">4dp</dimen>
     <dimen name="space_small">8dp</dimen>
+    <dimen name="space_compact">12dp</dimen>
     <dimen name="space_medium">16dp</dimen>
     <dimen name="space_large">24dp</dimen>
-    <dimen name="row_image_size">88dp</dimen>
+    <dimen name="space_extra_large">32dp</dimen>
+    <dimen name="page_padding">24dp</dimen>
+    <dimen name="component_corner_radius">8dp</dimen>
+    <dimen name="button_min_height">52dp</dimen>
+    <dimen name="auth_login_hero_height">232dp</dimen>
+    <dimen name="auth_signup_hero_height">168dp</dimen>
+    <dimen name="home_toolbar_height">72dp</dimen>
+    <dimen name="home_item_min_height">128dp</dimen>
+    <dimen name="home_list_bottom_padding">88dp</dimen>
+    <dimen name="row_image_size">104dp</dimen>
     <dimen name="detail_image_height">240dp</dimen>
 </resources>

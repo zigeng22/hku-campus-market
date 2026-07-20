@@ -1,7 +1,7 @@
 # HKU Campus Market：COMP7506D 小组项目总开发计划
 
 > 文档状态：唯一有效开发基线（Single Source of Truth）
-> 版本：1.1
+> 版本：1.2
 > 最后更新：2026-07-20
 > Android 工程：`E:\7506_project\Android_Studio_files`
 > 适用对象：4 人小组、Codex/其他代码 Agent、代码审查者、测试与演示负责人
@@ -817,8 +817,8 @@ flowchart LR
 
 | ID | 状态 | 任务 | 依赖 | 交付物与验收 |
 |---|---|---|---|---|
-| UI-01 | TODO | 统一颜色、字体层级、间距、按钮和输入框风格 | CONTRACT-02 | Login/Home 在 360x800 无截断；日夜主题不 crash |
-| UI-02 | TODO | 完成 Login/Sign Up XML | CONTRACT-02, UI-01 | 键盘类型、密码隐藏、error 区域和 loading 状态齐全 |
+| UI-01 | IN PROGRESS | 统一颜色、字体层级、间距、按钮和输入框风格 | CONTRACT-02 | 2026-07-20 已实现 HKU Campus Editorial 色板、日夜主题、8dp 组件样式和尺寸 token；assemble/lint 通过，待 360x800 与常用 Pixel 截图验收 |
+| UI-02 | IN PROGRESS | 完成 Login/Sign Up XML | CONTRACT-02, UI-01 | 已加入原创校园 hero，完成响应式滚动表单、输入法/密码/Autofill/loading 状态并保留固定 ID；待模拟器键盘、错误态和日夜模式验收 |
 | AUTH-01 | IN PROGRESS | 实现 `users` schema、PasswordHasher、用户模型映射 | CONTRACT-01 | `24c9050` 已实现 schema、PBKDF2 和映射；待 Repository 测试及设备持久化验证 |
 | AUTH-02 | IN PROGRESS | 实现 SessionManager 与 MainActivity 路由 | ARCH-02 | 登录状态和清栈已实现；失效 userId 尚未在启动路由中清除 |
 | AUTH-03 | IN PROGRESS | 实现注册校验和唯一昵称 | AUTH-01, UI-02 | 注册与唯一昵称逻辑已实现；WhatsApp 非数字的字段级提示及重复插入异常处理待修复，测试缺失 |
@@ -829,7 +829,7 @@ flowchart LR
 
 | ID | 状态 | 任务 | 依赖 | 交付物与验收 |
 |---|---|---|---|---|
-| UI-03 | TODO | Home、row_item、空状态 XML | CONTRACT-02, UI-01 | 列表、搜索、FAB、空状态在两种尺寸无重叠 |
+| UI-03 | IN PROGRESS | Home、row_item、空状态 XML | CONTRACT-02, UI-01 | 2026-07-20 已完成首页工具栏、搜索区、列表标题、商品卡片、空状态、双 FAB 和 RecyclerView 设计预览；assemble/lint 通过，待 360x800 与常用 Pixel 设备截图和交互验收 |
 | UI-04 | TODO | Post/Edit Item XML | CONTRACT-02, UI-01 | 表单可滚动；键盘不遮挡保存；图片占位稳定 |
 | UI-05 | TODO | Item Detail XML 与买卖双方 action group | CONTRACT-02, UI-01 | 两组操作互斥；长标题/描述不溢出 |
 | ITEM-01 | IN PROGRESS | 实现 items schema、索引和 Item 映射 | AUTH-01 | schema、FK 和映射已实现；缺少计划要求的复合索引/部分 CHECK 约束，待数据测试 |
