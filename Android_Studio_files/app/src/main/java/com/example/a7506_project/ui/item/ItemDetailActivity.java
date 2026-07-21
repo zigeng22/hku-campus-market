@@ -19,9 +19,11 @@ import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.User;
 import com.example.a7506_project.model.result.PlaceOfferResult;
 import com.example.a7506_project.ui.management.OfferReviewActivity;
+import com.example.a7506_project.util.CategoryFormatter;
 import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 import com.example.a7506_project.util.SessionManager;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ItemDetailActivity extends AppCompatActivity {
@@ -33,8 +35,9 @@ public class ItemDetailActivity extends AppCompatActivity {
     private long currentUserId;
 
     private ImageView imageItem;
-    private TextView textItemName, textItemPrice, textItemCategory, textItemDescription, textSellerName;
-    private View groupBuyerActions, groupSellerActions;
+    private TextView textItemName, textItemPrice, textItemCategory, textItemDescription, textSellerName,
+            textItemStatus;
+    private View groupBuyerActions, groupSellerActions, footerItemActions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +49,20 @@ public class ItemDetailActivity extends AppCompatActivity {
         currentUserId = session.getCurrentUserId();
         itemId = getIntent().getLongExtra(AppContract.EXTRA_ITEM_ID, AppContract.INVALID_ID);
 
+        MaterialToolbar toolbar = findViewById(R.id.toolbarItemDetail);
+        toolbar.setTitle(R.string.item_detail_title);
+        toolbar.setNavigationOnClickListener(view -> finish());
+
         imageItem = findViewById(R.id.imageItem);
         textItemName = findViewById(R.id.textItemName);
         textItemPrice = findViewById(R.id.textItemPrice);
         textItemCategory = findViewById(R.id.textItemCategory);
         textItemDescription = findViewById(R.id.textItemDescription);
         textSellerName = findViewById(R.id.textSellerName);
+        textItemStatus = findViewById(R.id.textItemStatus);
         groupBuyerActions = findViewById(R.id.groupBuyerActions);
         groupSellerActions = findViewById(R.id.groupSellerActions);
+        footerItemActions = findViewById(R.id.footerItemActions);
 
         findViewById(R.id.buttonMakeOffer).setOnClickListener(v -> showOfferDialog(AppContract.OFFER_TYPE_NEGOTIATED));
         findViewById(R.id.buttonBuyNow).setOnClickListener(v -> showOfferDialog(AppContract.OFFER_TYPE_BUY_NOW));
@@ -71,15 +80,17 @@ public class ItemDetailActivity extends AppCompatActivity {
     private void loadItem() {
         item = repo.getItemById(itemId);
         if (item == null) {
-            Toast.makeText(this, "Item not found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.item_not_found, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         textItemName.setText(item.getName());
         textItemPrice.setText(MoneyFormatter.centsToHkd(item.getPriceCents()));
-        textItemCategory.setText(item.getCategory());
-        textItemDescription.setText(item.getDescription());
+        textItemCategory.setText(CategoryFormatter.displayName(this, item.getCategory()));
+        textItemDescription.setText(item.getDescription().trim().isEmpty()
+                ? getString(R.string.description_not_provided)
+                : item.getDescription());
 
         User seller = repo.getUserById(item.getSellerId());
         if (seller != null) {
@@ -89,13 +100,19 @@ public class ItemDetailActivity extends AppCompatActivity {
         ImageUriLoader.loadOrShowPlaceholder(
                 this, imageItem, item.getImageUri(), R.drawable.ic_item_placeholder);
 
-        // Show different actions based on whether user is seller or buyer
-        if (item.getSellerId() == currentUserId) {
+        boolean active = AppContract.ITEM_ACTIVE.equals(item.getStatus());
+        textItemStatus.setVisibility(active ? View.GONE : View.VISIBLE);
+        footerItemActions.setVisibility(active ? View.VISIBLE : View.GONE);
+
+        if (!active) {
             groupBuyerActions.setVisibility(View.GONE);
-            groupSellerActions.setVisibility(AppContract.ITEM_ACTIVE.equals(item.getStatus()) ? View.VISIBLE : View.GONE);
+            groupSellerActions.setVisibility(View.GONE);
+        } else if (item.getSellerId() == currentUserId) {
+            groupBuyerActions.setVisibility(View.GONE);
+            groupSellerActions.setVisibility(View.VISIBLE);
         } else {
             groupSellerActions.setVisibility(View.GONE);
-            groupBuyerActions.setVisibility(AppContract.ITEM_ACTIVE.equals(item.getStatus()) ? View.VISIBLE : View.GONE);
+            groupBuyerActions.setVisibility(View.VISIBLE);
         }
     }
 
@@ -175,15 +192,15 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private void deleteItem() {
         new AlertDialog.Builder(this)
-                .setTitle("Delete item")
-                .setMessage("Delete this item? This cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle(R.string.delete_item_title)
+                .setMessage(R.string.delete_item_message)
+                .setPositiveButton(R.string.delete_item_confirm, (dialog, which) -> {
                     boolean ok = repo.softDeleteItem(itemId, currentUserId);
                     if (ok) {
-                        Toast.makeText(this, "Item deleted.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.item_deleted, Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(this, "Delete failed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.item_delete_failed, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(R.string.action_close, null)

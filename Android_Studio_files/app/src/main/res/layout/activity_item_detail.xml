@@ -1,119 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true">
+    android:background="@color/app_background"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.item.ItemDetailActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/space_large">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarItemDetail"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/home_toolbar_height"
+        android:title="@string/item_detail_title"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextAppearance="@style/TextAppearance.HkuMarket.ToolbarTitle" />
 
-        <ImageView
-            android:id="@+id/imageItem"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/detail_image_height"
-            android:contentDescription="@string/item_image_description"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_item_placeholder" />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollItemDetail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/footerItemActions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarItemDetail">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/space_medium">
+            android:paddingBottom="@dimen/space_extra_large">
 
-            <TextView
-                android:id="@+id/textItemName"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageItem"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sample_item_name"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
-            <TextView
-                android:id="@+id/textItemPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_small"
-                android:text="@string/sample_item_price"
-                android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-            <TextView
-                android:id="@+id/textItemCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_small"
-                android:text="@string/sample_item_category" />
-
-            <TextView
-                android:id="@+id/textItemDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_medium"
-                android:text="@string/sample_item_description" />
-
-            <TextView
-                android:id="@+id/textSellerName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_medium"
-                android:text="@string/sample_seller"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:layout_height="@dimen/detail_image_height"
+                android:background="@drawable/bg_item_image"
+                android:contentDescription="@string/item_image_description"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_item_placeholder" />
 
             <LinearLayout
-                android:id="@+id/groupBuyerActions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_large"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonMakeOffer"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/action_make_offer" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonBuyNow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_small"
-                    android:layout_weight="1"
-                    android:text="@string/action_buy_now" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/groupSellerActions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_large"
+                android:background="@color/surface"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:paddingStart="@dimen/page_padding"
+                android:paddingTop="@dimen/space_large"
+                android:paddingEnd="@dimen/page_padding"
+                android:paddingBottom="@dimen/space_large">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonEditItem"
+                <TextView
+                    android:id="@+id/textItemCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_category_chip"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/space_small"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="@dimen/space_small"
+                    android:paddingBottom="2dp"
+                    android:text="@string/sample_item_category"
+                    android:textAppearance="@style/TextAppearance.HkuMarket.Category" />
+
+                <TextView
+                    android:id="@+id/textItemName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_edit_item" />
+                    android:layout_marginTop="@dimen/space_compact"
+                    android:text="@string/sample_item_name"
+                    android:textAppearance="@style/TextAppearance.HkuMarket.DetailTitle" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonDeleteItem"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <TextView
+                    android:id="@+id/textItemPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_delete_item" />
+                    android:layout_marginTop="@dimen/space_small"
+                    android:text="@string/sample_item_price"
+                    android:textAppearance="@style/TextAppearance.HkuMarket.ItemPrice" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonViewOffers"
-                    style="@style/Widget.Material3.Button.TextButton"
+                <TextView
+                    android:id="@+id/textItemStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_view_offers" />
+                    android:layout_marginTop="@dimen/space_medium"
+                    android:background="@drawable/bg_status_notice"
+                    android:padding="@dimen/space_compact"
+                    android:text="@string/item_unavailable"
+                    android:textAppearance="@style/TextAppearance.HkuMarket.Metadata"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textSellerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_large"
+                    android:drawablePadding="@dimen/space_small"
+                    android:gravity="center_vertical"
+                    android:text="@string/sample_seller"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    app:drawableStartCompat="@drawable/ic_person_24"
+                    app:drawableTint="@color/brand_primary" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_large"
+                    app:dividerColor="@color/outline_variant" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_large"
+                    android:text="@string/about_item_title"
+                    android:textAppearance="@style/TextAppearance.HkuMarket.SectionTitle" />
+
+                <TextView
+                    android:id="@+id/textItemDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_small"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/sample_item_description"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/footerItemActions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:paddingStart="@dimen/page_padding"
+        android:paddingTop="@dimen/space_compact"
+        android:paddingEnd="@dimen/page_padding"
+        android:paddingBottom="@dimen/space_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/groupBuyerActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonMakeOffer"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/action_make_offer" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonBuyNow"
+                style="@style/Widget.HkuMarket.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_small"
+                android:layout_weight="1"
+                android:text="@string/action_buy_now" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/groupSellerActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonDeleteItem"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/delete_item_description"
+                android:minWidth="52dp"
+                android:text=""
+                app:icon="@drawable/ic_delete_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/status_error"
+                app:strokeColor="@color/status_error" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonEditItem"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_small"
+                android:layout_weight="1"
+                android:text="@string/action_edit_item"
+                app:icon="@drawable/ic_edit_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonViewOffers"
+                style="@style/Widget.HkuMarket.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_small"
+                android:layout_weight="1.35"
+                android:text="@string/action_view_offers" />
+        </LinearLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
