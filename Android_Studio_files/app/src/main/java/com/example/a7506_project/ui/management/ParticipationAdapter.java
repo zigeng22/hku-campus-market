@@ -42,11 +42,12 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
 
         // Only reveal WhatsApp for CONFIRMED deals
         if (item.getCounterpartyWhatsapp() != null && !item.getCounterpartyWhatsapp().isEmpty()) {
-            holder.whatsapp.setText("WhatsApp: " + item.getCounterpartyWhatsapp());
+            holder.whatsapp.setText(holder.itemView.getContext().getString(
+                    R.string.counterparty_whatsapp, item.getCounterpartyWhatsapp()));
             holder.whatsapp.setVisibility(View.VISIBLE);
         } else {
-            holder.whatsapp.setText(R.string.sample_whatsapp);
-            holder.whatsapp.setVisibility(View.VISIBLE);
+            holder.whatsapp.setText(null);
+            holder.whatsapp.setVisibility(View.GONE);
         }
     }
 

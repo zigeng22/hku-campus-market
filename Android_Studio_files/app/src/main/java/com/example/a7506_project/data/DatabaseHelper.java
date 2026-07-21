@@ -1,7 +1,6 @@
 package com.example.a7506_project.data;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -12,12 +11,14 @@ import com.example.a7506_project.contract.DatabaseContract.TradeTransactions;
 import com.example.a7506_project.contract.DatabaseContract.Users;
 import com.example.a7506_project.util.PasswordHasher;
 
-import java.util.Arrays;
-
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
-        super(context, DatabaseContract.DATABASE_NAME, null, DatabaseContract.DATABASE_VERSION);
+        this(context, DatabaseContract.DATABASE_NAME);
+    }
+
+    DatabaseHelper(Context context, String databaseName) {
+        super(context, databaseName, null, DatabaseContract.DATABASE_VERSION);
     }
 
     @Override

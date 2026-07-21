@@ -442,21 +442,21 @@ public class MarketRepositoryImpl implements MarketRepository {
 
         String sql = "SELECT o." + Offers.ITEM_ID + ", i." + Items.NAME + ", o." + Offers.AMOUNT_CENTS + ", "
                 + "o." + Offers.STATUS + ", "
-                + "CASE WHEN t." + TradeTransactions._ID + " IS NOT NULL THEN 'CONFIRMED' ELSE 'PENDING' END, "
-                + "u." + Users.WHATSAPP
+                + "CASE WHEN t." + TradeTransactions._ID + " IS NOT NULL THEN 'CONFIRMED' ELSE o." + Offers.STATUS + " END, "
+                + "CASE WHEN t." + TradeTransactions._ID + " IS NOT NULL THEN u." + Users.WHATSAPP + " ELSE NULL END"
                 + " FROM " + Offers.TABLE + " o"
                 + " JOIN " + Items.TABLE + " i ON o." + Offers.ITEM_ID + " = i." + Items._ID
-                + " LEFT JOIN " + TradeTransactions.TABLE + " t ON o." + Offers.ITEM_ID + " = t." + TradeTransactions.ITEM_ID
+                + " LEFT JOIN " + TradeTransactions.TABLE + " t ON o." + Offers._ID + " = t." + TradeTransactions.OFFER_ID
+                + " AND o." + Offers.BUYER_ID + " = t." + TradeTransactions.BUYER_ID
                 + " LEFT JOIN " + Users.TABLE + " u ON i." + Items.SELLER_ID + " = u." + Users._ID
                 + " WHERE o." + Offers.BUYER_ID + " = ?"
-                + " ORDER BY o." + Offers.CREATED_AT + " DESC";
+                + " ORDER BY o." + Offers.CREATED_AT + " DESC, o." + Offers._ID + " DESC";
 
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(buyerId)});
         List<ParticipationSummary> result = new ArrayList<>();
         while (cursor.moveToNext()) {
             String dealStatus = cursor.getString(4);
-            // only reveal WhatsApp when deal is CONFIRMED
-            String whatsapp = "CONFIRMED".equals(dealStatus) ? cursor.getString(5) : null;
+            String whatsapp = cursor.isNull(5) ? null : cursor.getString(5);
             result.add(new ParticipationSummary(
                     cursor.getLong(0),
                     cursor.getString(1),
