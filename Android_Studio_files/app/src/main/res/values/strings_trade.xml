@@ -13,12 +13,14 @@
     <string name="offer_error_duplicate">You already have a pending offer on this item</string>
     <string name="offer_error_inactive">This item is no longer active</string>
     <string name="offer_error_generic">Failed to submit offer</string>
-    <string name="management_title">Management</string>
+    <string name="management_title">My Market</string>
     <string name="tab_my_listings">My Listings</string>
     <string name="tab_my_activity">My Activity</string>
     <string name="empty_management">Nothing to show here yet</string>
+    <string name="empty_my_listings">You have not posted any items yet</string>
+    <string name="empty_my_activity">You have not made any offers yet</string>
     <string name="offer_review_title">Offers</string>
-    <string name="empty_offers">No offers yet</string>
+    <string name="empty_offers">No offers for this item yet</string>
     <string name="sample_status">Status</string>
     <string name="sample_offer_count">0 offers</string>
     <string name="sample_buyer">Buyer</string>
@@ -27,4 +29,26 @@
     <string name="sample_activity_item">Item</string>
     <string name="sample_whatsapp">WhatsApp available after confirmation</string>
     <string name="counterparty_whatsapp">WhatsApp: %1$s</string>
+    <string name="your_offer_amount">Your offer: %1$s</string>
+    <string name="offer_from_buyer">Offer from %1$s</string>
+    <string name="offer_metadata">%1$s · %2$s</string>
+    <string name="offer_type_negotiated">Custom offer</string>
+    <string name="offer_type_buy_now">Buy Now</string>
+    <string name="status_active">Active</string>
+    <string name="status_sold">Sold</string>
+    <string name="status_deleted">Deleted</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_accepted">Accepted</string>
+    <string name="status_rejected">Rejected</string>
+    <plurals name="offer_count">
+        <item quantity="one">%d offer</item>
+        <item quantity="other">%d offers</item>
+    </plurals>
+    <string name="accept_offer_title">Accept offer?</string>
+    <string name="accept_offer_message">Accept %1$s\'s offer? This item will be marked as sold.</string>
+    <string name="offer_accepted">Offer accepted. Deal confirmed.</string>
+    <string name="accept_error_not_found">Offer not found</string>
+    <string name="accept_error_not_pending">This offer is no longer pending</string>
+    <string name="accept_error_generic">Could not accept this offer</string>
+    <string name="offer_review_not_owner">Only the seller can review offers for this item</string>
 </resources>

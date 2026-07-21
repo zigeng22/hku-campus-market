@@ -6,14 +6,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a7506_project.R;
 import com.example.a7506_project.contract.AppContract;
 import com.example.a7506_project.model.OfferSummary;
 import com.example.a7506_project.util.MoneyFormatter;
+import com.example.a7506_project.util.TradeDisplayFormatter;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> {
@@ -46,10 +50,17 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OfferSummary offer = offers.get(position);
-        holder.buyerName.setText(offer.getBuyerNickname());
+        holder.buyerName.setText(holder.itemView.getContext().getString(
+                R.string.offer_from_buyer, offer.getBuyerNickname()));
         holder.amount.setText(MoneyFormatter.centsToHkd(offer.getAmountCents()));
-        holder.type.setText(offer.getType());
-        holder.status.setText(offer.getStatus());
+        String date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(offer.getCreatedAt()));
+        holder.type.setText(holder.itemView.getContext().getString(
+                R.string.offer_metadata,
+                TradeDisplayFormatter.offerTypeLabel(holder.itemView.getContext(), offer.getType()),
+                date));
+        holder.status.setText(TradeDisplayFormatter.statusLabel(holder.itemView.getContext(), offer.getStatus()));
+        holder.status.setTextColor(ContextCompat.getColor(
+                holder.itemView.getContext(), TradeDisplayFormatter.statusColor(offer.getStatus())));
 
         boolean isPending = AppContract.OFFER_PENDING.equals(offer.getStatus());
         holder.acceptButton.setVisibility(isPending ? View.VISIBLE : View.GONE);

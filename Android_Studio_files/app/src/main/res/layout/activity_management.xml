@@ -3,14 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarManagement"
+        style="@style/Widget.HkuMarket.Toolbar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:title="@string/management_title"
+        android:layout_height="@dimen/home_toolbar_height"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/management_title"
+        app:titleTextAppearance="@style/TextAppearance.HkuMarket.ToolbarTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,6 +22,10 @@
         android:id="@+id/tabManagement"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:tabIndicatorColor="@color/brand_primary"
+        app:tabSelectedTextColor="@color/brand_primary"
+        app:tabTextColor="@color/text_secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarManagement">
@@ -39,7 +46,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:padding="@dimen/space_medium"
+        android:paddingStart="@dimen/space_medium"
+        android:paddingTop="@dimen/space_medium"
+        android:paddingEnd="@dimen/space_medium"
+        android:paddingBottom="@dimen/space_large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,9 +57,13 @@
 
     <TextView
         android:id="@+id/textEmptyManagement"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_marginEnd="@dimen/page_padding"
+        android:gravity="center"
         android:text="@string/empty_management"
+        android:textAppearance="@style/TextAppearance.HkuMarket.EmptyState"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

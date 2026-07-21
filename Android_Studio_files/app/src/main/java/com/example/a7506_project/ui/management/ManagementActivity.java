@@ -82,16 +82,16 @@ public class ManagementActivity extends AppCompatActivity {
 
     private void loadTabContent() {
         if (currentTab == 0) {
-            // My Listings
             List<ItemCard> listings = repo.getListingsBySeller(currentUserId);
             recycler.setAdapter(listingAdapter);
             listingAdapter.setItems(listings);
+            textEmpty.setText(R.string.empty_my_listings);
             textEmpty.setVisibility(listings.isEmpty() ? View.VISIBLE : View.GONE);
         } else {
-            // My Activity
             List<ParticipationSummary> activities = repo.getBuyerActivity(currentUserId);
             recycler.setAdapter(participationAdapter);
             participationAdapter.setItems(activities);
+            textEmpty.setText(R.string.empty_my_activity);
             textEmpty.setVisibility(activities.isEmpty() ? View.VISIBLE : View.GONE);
         }
     }
