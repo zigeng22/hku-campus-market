@@ -1,6 +1,5 @@
 package com.example.a7506_project.ui.item;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -20,6 +19,7 @@ import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.ItemDraft;
+import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
@@ -39,10 +39,16 @@ public class PostEditItemActivity extends AppCompatActivity {
     private final ActivityResultLauncher<String[]> imagePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
                 if (uri != null) {
-                    getContentResolver().takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    selectedImageUri = uri;
-                    imagePreview.setImageURI(uri);
+                    boolean permissionPersisted = ImageUriLoader.persistReadPermission(this, uri);
+                    boolean imageLoaded = permissionPersisted
+                            && ImageUriLoader.loadOrShowPlaceholder(
+                            this, imagePreview, uri.toString(), R.drawable.ic_item_placeholder);
+                    if (imageLoaded) {
+                        selectedImageUri = uri;
+                    } else {
+                        selectedImageUri = null;
+                        Toast.makeText(this, R.string.image_unavailable, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -97,8 +103,9 @@ public class PostEditItemActivity extends AppCompatActivity {
         inputPrice.setText(String.valueOf(item.getPriceCents() / 100.0));
         dropdownCategory.setText(item.getCategory(), false);
         if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
-            selectedImageUri = Uri.parse(item.getImageUri());
-            imagePreview.setImageURI(selectedImageUri);
+            boolean imageLoaded = ImageUriLoader.loadOrShowPlaceholder(
+                    this, imagePreview, item.getImageUri(), R.drawable.ic_item_placeholder);
+            selectedImageUri = imageLoaded ? Uri.parse(item.getImageUri()) : null;
         }
     }
 

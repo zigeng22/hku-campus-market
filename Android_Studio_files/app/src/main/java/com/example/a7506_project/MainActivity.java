@@ -5,6 +5,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.a7506_project.contract.AppContract;
+import com.example.a7506_project.data.MarketRepository;
+import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.ui.auth.LoginActivity;
 import com.example.a7506_project.ui.home.HomeActivity;
 import com.example.a7506_project.util.SessionManager;
@@ -16,7 +19,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SessionManager sessionManager = new SessionManager(this);
-        Class<?> destination = sessionManager.isLoggedIn()
+        long userId = sessionManager.getCurrentUserId();
+        MarketRepository repository = RepositoryProvider.get(this);
+        boolean hasValidSession = userId != AppContract.INVALID_ID
+                && repository.getUserById(userId) != null;
+        if (!hasValidSession && userId != AppContract.INVALID_ID) {
+            sessionManager.logout();
+        }
+
+        Class<?> destination = hasValidSession
                 ? HomeActivity.class
                 : LoginActivity.class;
 
