@@ -103,58 +103,77 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
     private void showOfferDialog(String offerType) {
+        if (AppContract.OFFER_TYPE_BUY_NOW.equals(offerType)) {
+            showBuyNowConfirmation();
+            return;
+        }
+
         View content = LayoutInflater.from(this).inflate(R.layout.dialog_make_offer, null);
         TextInputEditText inputAmount = content.findViewById(R.id.inputOfferAmount);
-
-        String title = AppContract.OFFER_TYPE_BUY_NOW.equals(offerType)
-                ? getString(R.string.action_buy_now) : getString(R.string.action_make_offer);
-
-        new AlertDialog.Builder(this)
-                .setTitle(title)
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.action_make_offer)
                 .setView(content)
-                .setPositiveButton("Submit", (dialog, which) -> {
-                    String amountText = inputAmount.getText().toString().trim();
-                    if (amountText.isEmpty()) {
-                        Toast.makeText(this, "Please enter an amount.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    double amount;
-                    try {
-                        amount = Double.parseDouble(amountText);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(this, "Invalid amount.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    long amountCents = MoneyFormatter.hkdToCents(amount);
+                .setPositiveButton(R.string.action_submit_offer, null)
+                .setNegativeButton(R.string.action_close, null)
+                .create();
 
-                    PlaceOfferResult result = repo.placeOffer(itemId, currentUserId, amountCents, offerType);
-                    if (result.isSuccess()) {
-                        Toast.makeText(this, "Offer submitted!", Toast.LENGTH_SHORT).show();
-                        loadItem();
-                    } else {
-                        String errMsg;
-                        switch (result.getCode()) {
-                            case CANNOT_OFFER_OWN_ITEM:
-                                errMsg = "You cannot offer on your own item.";
-                                break;
-                            case DUPLICATE_PENDING_OFFER:
-                                errMsg = "You already have a pending offer on this item.";
-                                break;
-                            case ITEM_NOT_ACTIVE:
-                                errMsg = "This item is no longer active.";
-                                break;
-                            case INVALID_PRICE:
-                                errMsg = "Price must be greater than zero.";
-                                break;
-                            default:
-                                errMsg = "Failed to submit offer.";
-                                break;
-                        }
-                        Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
+        dialog.setOnShowListener(ignored ->
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    String amountText = inputAmount.getText().toString().trim();
+                    long amountCents = MoneyFormatter.hkdToCents(amountText);
+                    if (amountCents <= 0) {
+                        inputAmount.setError(getString(R.string.offer_amount_error));
+                        return;
                     }
-                })
+                    inputAmount.setError(null);
+                    if (submitOffer(amountCents, AppContract.OFFER_TYPE_NEGOTIATED)) {
+                        dialog.dismiss();
+                    }
+                }));
+        dialog.show();
+    }
+
+    private void showBuyNowConfirmation() {
+        String formattedPrice = MoneyFormatter.centsToHkd(item.getPriceCents());
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.buy_now_confirmation_title)
+                .setMessage(getString(R.string.buy_now_confirmation_message, formattedPrice))
+                .setPositiveButton(R.string.action_buy_now, (dialog, which) ->
+                        submitOffer(item.getPriceCents(), AppContract.OFFER_TYPE_BUY_NOW))
                 .setNegativeButton(R.string.action_close, null)
                 .show();
+    }
+
+    private boolean submitOffer(long amountCents, String offerType) {
+        PlaceOfferResult result = repo.placeOffer(itemId, currentUserId, amountCents, offerType);
+        if (result.isSuccess()) {
+            int message = AppContract.OFFER_TYPE_BUY_NOW.equals(offerType)
+                    ? R.string.buy_now_submitted : R.string.offer_submitted;
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            loadItem();
+            return true;
+        }
+
+        int errorMessage;
+        switch (result.getCode()) {
+            case CANNOT_OFFER_OWN_ITEM:
+                errorMessage = R.string.offer_error_own_item;
+                break;
+            case DUPLICATE_PENDING_OFFER:
+                errorMessage = R.string.offer_error_duplicate;
+                break;
+            case ITEM_NOT_ACTIVE:
+                errorMessage = R.string.offer_error_inactive;
+                break;
+            case INVALID_PRICE:
+                errorMessage = R.string.offer_amount_error;
+                break;
+            default:
+                errorMessage = R.string.offer_error_generic;
+                break;
+        }
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     private void deleteItem() {
