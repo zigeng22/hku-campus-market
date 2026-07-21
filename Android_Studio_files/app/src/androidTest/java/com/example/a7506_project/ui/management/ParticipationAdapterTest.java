@@ -39,6 +39,8 @@ public class ParticipationAdapterTest {
                         1, "Java textbook", 12000, "ACCEPTED", "CONFIRMED", "91234567")));
                 adapter.onBindViewHolder(holder, 0);
                 assertEquals(View.VISIBLE, holder.whatsapp.getVisibility());
+                assertEquals(context.getString(R.string.status_deal_confirmed),
+                        holder.status.getText().toString());
 
                 adapter.setItems(Collections.singletonList(new ParticipationSummary(
                         2, "Desk lamp", 7000, "PENDING", "PENDING", null)));

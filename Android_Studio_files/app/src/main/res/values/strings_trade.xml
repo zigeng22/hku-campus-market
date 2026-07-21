@@ -39,6 +39,7 @@
     <string name="status_deleted">Deleted</string>
     <string name="status_pending">Pending</string>
     <string name="status_accepted">Accepted</string>
+    <string name="status_deal_confirmed">Deal confirmed</string>
     <string name="status_rejected">Rejected</string>
     <plurals name="offer_count">
         <item quantity="one">%d offer</item>

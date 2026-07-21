@@ -87,6 +87,8 @@ public class PostEditItemActivity extends AppCompatActivity {
         dropdownCategory = findViewById(R.id.dropdownCategory);
         dropdownCategory.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, categories));
+        dropdownCategory.setThreshold(0);
+        dropdownCategory.setOnClickListener(view -> dropdownCategory.showDropDown());
 
         findViewById(R.id.buttonChooseImage).setOnClickListener(view ->
                 imagePickerLauncher.launch(new String[]{"image/*"}));

@@ -41,10 +41,14 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
         holder.itemName.setText(item.getItemName());
         holder.amount.setText(holder.itemView.getContext().getString(
                 R.string.your_offer_amount, MoneyFormatter.centsToHkd(item.getOfferAmountCents())));
-        holder.status.setText(TradeDisplayFormatter.statusLabel(
-                holder.itemView.getContext(), item.getOfferStatus()));
+        boolean dealConfirmed = "CONFIRMED".equals(item.getDealStatus());
+        holder.status.setText(dealConfirmed
+                ? holder.itemView.getContext().getString(R.string.status_deal_confirmed)
+                : TradeDisplayFormatter.statusLabel(holder.itemView.getContext(), item.getOfferStatus()));
         holder.status.setTextColor(ContextCompat.getColor(
-                holder.itemView.getContext(), TradeDisplayFormatter.statusColor(item.getOfferStatus())));
+                holder.itemView.getContext(), dealConfirmed
+                        ? R.color.status_success
+                        : TradeDisplayFormatter.statusColor(item.getOfferStatus())));
 
         // Only reveal WhatsApp for CONFIRMED deals
         if (item.getCounterpartyWhatsapp() != null && !item.getCounterpartyWhatsapp().isEmpty()) {
