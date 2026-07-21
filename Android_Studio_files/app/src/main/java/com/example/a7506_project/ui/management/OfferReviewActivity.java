@@ -14,6 +14,7 @@ import com.example.a7506_project.R;
 import com.example.a7506_project.contract.AppContract;
 import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.data.RepositoryProvider;
+import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.OfferSummary;
 import com.example.a7506_project.model.result.AcceptOfferResult;
 import com.example.a7506_project.util.SessionManager;
@@ -38,6 +39,13 @@ public class OfferReviewActivity extends AppCompatActivity {
         repo = RepositoryProvider.get(this);
         currentUserId = new SessionManager(this).getCurrentUserId();
         itemId = getIntent().getLongExtra(AppContract.EXTRA_ITEM_ID, AppContract.INVALID_ID);
+
+        Item item = repo.getItemById(itemId);
+        if (item == null || item.getSellerId() != currentUserId) {
+            Toast.makeText(this, R.string.offer_review_not_owner, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         MaterialToolbar toolbar = findViewById(R.id.toolbarOffers);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -66,33 +74,33 @@ public class OfferReviewActivity extends AppCompatActivity {
 
     private void onAcceptOffer(OfferSummary offer) {
         new AlertDialog.Builder(this)
-                .setTitle("Accept offer")
-                .setMessage("Accept this offer from " + offer.getBuyerNickname() + "? This will mark the item as sold and reject all other offers.")
-                .setPositiveButton("Accept", (dialog, which) -> {
+                .setTitle(R.string.accept_offer_title)
+                .setMessage(getString(R.string.accept_offer_message, offer.getBuyerNickname()))
+                .setPositiveButton(R.string.action_accept_offer, (dialog, which) -> {
                     AcceptOfferResult result = repo.acceptOffer(offer.getOfferId(), currentUserId);
                     if (result.isSuccess()) {
-                        Toast.makeText(this, "Offer accepted! Deal confirmed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.offer_accepted, Toast.LENGTH_SHORT).show();
                         loadOffers();
                     } else {
-                        String msg;
+                        int message;
                         switch (result.getCode()) {
                             case OFFER_NOT_FOUND:
-                                msg = "Offer not found.";
+                                message = R.string.accept_error_not_found;
                                 break;
                             case OFFER_NOT_PENDING:
-                                msg = "This offer is no longer pending.";
+                                message = R.string.accept_error_not_pending;
                                 break;
                             case ITEM_NOT_ACTIVE:
-                                msg = "This item is no longer active.";
+                                message = R.string.offer_error_inactive;
                                 break;
                             case NOT_OWNER:
-                                msg = "Only the item owner can accept offers.";
+                                message = R.string.offer_review_not_owner;
                                 break;
                             default:
-                                msg = "Failed to accept offer.";
+                                message = R.string.accept_error_generic;
                                 break;
                         }
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(R.string.action_close, null)

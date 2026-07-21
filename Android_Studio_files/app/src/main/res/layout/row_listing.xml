@@ -1,60 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.HkuMarket.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/space_small"
+    android:layout_marginBottom="@dimen/space_compact"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="8dp">
+    app:cardUseCompatPadding="false">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/space_small">
+        android:minHeight="@dimen/home_item_min_height"
+        android:padding="@dimen/space_compact">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageListing"
             android:layout_width="@dimen/row_image_size"
             android:layout_height="@dimen/row_image_size"
+            android:background="@drawable/bg_item_image"
             android:contentDescription="@string/item_image_description"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:src="@drawable/ic_item_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.HkuMarket.ItemImage" />
+
+        <TextView
+            android:id="@+id/textListingName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_medium"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/sample_item_name"
+            android:textAppearance="@style/TextAppearance.HkuMarket.ItemTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageListing"
+            app:layout_constraintTop_toTopOf="@id/imageListing" />
+
+        <TextView
+            android:id="@+id/textListingPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_medium"
+            android:layout_marginTop="@dimen/space_extra_small"
+            android:text="@string/sample_item_price"
+            android:textAppearance="@style/TextAppearance.HkuMarket.ItemPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageListing"
+            app:layout_constraintTop_toBottomOf="@id/textListingName" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_medium"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textListingName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="@string/sample_item_name"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-            <TextView
-                android:id="@+id/textListingPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sample_item_price" />
+            android:layout_marginTop="@dimen/space_small"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageListing"
+            app:layout_constraintTop_toBottomOf="@id/textListingPrice">
 
             <TextView
                 android:id="@+id/textListingStatus"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/sample_status" />
+                android:layout_weight="1"
+                android:text="@string/sample_status"
+                android:textAppearance="@style/TextAppearance.HkuMarket.Brand" />
 
             <TextView
                 android:id="@+id/textOfferCount"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sample_offer_count" />
+                android:text="@string/sample_offer_count"
+                android:textAppearance="@style/TextAppearance.HkuMarket.Metadata"
+                tools:text="2 offers" />
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

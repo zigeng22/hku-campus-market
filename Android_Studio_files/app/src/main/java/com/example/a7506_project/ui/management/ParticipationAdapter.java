@@ -6,11 +6,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a7506_project.R;
 import com.example.a7506_project.model.ParticipationSummary;
 import com.example.a7506_project.util.MoneyFormatter;
+import com.example.a7506_project.util.TradeDisplayFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,12 @@ public class ParticipationAdapter extends RecyclerView.Adapter<ParticipationAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ParticipationSummary item = items.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.amount.setText(MoneyFormatter.centsToHkd(item.getOfferAmountCents()));
-        holder.status.setText(item.getOfferStatus());
+        holder.amount.setText(holder.itemView.getContext().getString(
+                R.string.your_offer_amount, MoneyFormatter.centsToHkd(item.getOfferAmountCents())));
+        holder.status.setText(TradeDisplayFormatter.statusLabel(
+                holder.itemView.getContext(), item.getOfferStatus()));
+        holder.status.setTextColor(ContextCompat.getColor(
+                holder.itemView.getContext(), TradeDisplayFormatter.statusColor(item.getOfferStatus())));
 
         // Only reveal WhatsApp for CONFIRMED deals
         if (item.getCounterpartyWhatsapp() != null && !item.getCounterpartyWhatsapp().isEmpty()) {
