@@ -16,4 +16,5 @@
     <string name="action_accept_offer">Accept</string>
     <string name="sample_activity_item">Item</string>
     <string name="sample_whatsapp">WhatsApp available after confirmation</string>
+    <string name="counterparty_whatsapp">WhatsApp: %1$s</string>
 </resources>

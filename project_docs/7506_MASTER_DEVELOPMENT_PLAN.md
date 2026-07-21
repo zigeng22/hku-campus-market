@@ -1,8 +1,8 @@
 # HKU Campus Market：COMP7506D 小组项目总开发计划
 
 > 文档状态：唯一有效开发基线（Single Source of Truth）
-> 版本：1.3
-> 最后更新：2026-07-20
+> 版本：1.4
+> 最后更新：2026-07-21
 > Android 工程：`E:\7506_project\Android_Studio_files`
 > 适用对象：4 人小组、Codex/其他代码 Agent、代码审查者、测试与演示负责人
 
@@ -853,7 +853,7 @@ flowchart LR
 | TRADE-04 | IN PROGRESS | 实现 seller offer list 查询与 OfferReviewActivity | UI-06, TRADE-01 | seller 查询、列表和 Pending Accept 已实现；非 owner 只返回空列表，待明确拒绝反馈和测试 |
 | TRADE-05 | IN PROGRESS | 实现原子 acceptOffer 事务 | TRADE-01, ITEM-02 | 六步 transaction 已实现且可编译；原子回滚、重复接受和权限测试尚未建立 |
 | TRADE-06 | IN PROGRESS | 实现 My Listings 数据与列表交互 | UI-07, ITEM-03, TRADE-04 | 状态、报价数和详情导航已实现；`ItemCard` 被未授权扩展 status/offerCount，需单独处理契约一致性 |
-| TRADE-07 | IN PROGRESS | 实现 My Activity 和成交联系人查询 | UI-07, TRADE-05 | 查询和 Adapter 已实现但存在隐私 blocker：同商品其他报价可能被标为成交，且无号码时 UI 仍显示示例号码 |
+| TRADE-07 | IN PROGRESS | 实现 My Activity 和成交联系人查询 | UI-07, TRADE-05 | 2026-07-21 `fix/TRADE-07-contact-privacy` 已按 accepted offer 精确匹配 transaction，Pending/Rejected 隐藏联系方式；真实 SQLite 双买家测试和 Adapter 复用测试共 4 个仪器测试通过；待 PR 交叉审核并合并 main 后改为 DONE |
 | TRADE-08 | IN PROGRESS | 完成 ManagementActivity Tab 切换 | TRADE-06, TRADE-07 | Tab、Adapter 切换和 onResume 已实现；须先修复 TRADE-07 并做设备回归 |
 | TEST-TRADE-01 | TODO | 报价规则测试 | TRADE-02 | 自购、非法金额、重复报价、非 ACTIVE 均覆盖 |
 | TEST-TRADE-02 | TODO | 原子成交和权限测试 | TRADE-05, TRADE-07 | 一笔 ACCEPTED、一笔 transaction、其余 REJECTED、item SOLD；失败时无半成品 |
@@ -907,6 +907,32 @@ flowchart LR
 9. `TEST-AUTH-01`、`TEST-ITEM-01`、`TEST-TRADE-01/02`：当前业务测试为 0，必须在宣告功能完成前补齐。
 
 在以上 blocker 修复并完成设备 E2E 前，`INT-01/02/03` 保持 `TODO`；不得仅依据个人完成报告改为 `DONE`。
+
+### 12.2 2026-07-21 P0 修复执行基线
+
+当前决定继续使用 `SQLiteOpenHelper` 本地数据库，不引入 Firebase、远程 API 或其他云端依赖。数据库、Repository 和 Activity 调用链保留；后续工作重点是修正规则、补齐异常路径和建立可重复验收证据。
+
+后端与集成任务必须按以下顺序逐项关闭；前一项未通过测试时，不得把依赖它的后续任务标为 `DONE`：
+
+| 顺序 | 任务 | 必须完成的具体内容 | 完成证据 |
+|---|---|---|---|
+| 1 | `TRADE-07` | `getBuyerActivity` 只按 accepted `offer_id` 关联 transaction；未成交报价不得得到联系方式；Adapter 无号码时隐藏控件且不显示示例号码 | 一件商品至少两个买家报价，只允许 accepted 买家看到卖家 WhatsApp；Repository 与 Adapter 测试通过 |
+| 2 | `TRADE-02/03` | Repository 校验 offer type；`BUY_NOW` 金额强制等于当前商品标价；Buy Now UI 不再要求用户输入金额并提供确认反馈 | 普通报价仍可输入；篡改 Buy Now 金额也只能按标价保存；重复 Pending/自购/非 ACTIVE 均返回稳定错误码 |
+| 3 | `AUTH-02` | 启动时用 Repository 验证 session userId；用户不存在时清 session 并进入 Login | 有效 session 进入 Home；伪造/失效 userId 自动退出；返回栈正确 |
+| 4 | `ITEM-03` | 搜索同时覆盖 name 和 description；同价格/同时间结果增加稳定次级排序 | 名称、描述、大小写、空关键字、仅 ACTIVE 和排序边界测试通过 |
+| 5 | `ITEM-06` | `takePersistableUriPermission`、预览和详情加载捕获失效/无权限 URI；统一回退占位图 | 空 URI、撤销权限、不可读 URI 均不 crash，发布和详情仍可使用 |
+| 6 | `ITEM-01/TRADE-01` | 补价格/状态/type CHECK 与第 6.2 节复合索引；明确 schema v2 migration 或在冻结前执行一次受控数据重置 | `PRAGMA table_info/index_list` 与异常插入测试通过；升级路径有记录 |
+| 7 | `TRADE-06/CONTRACT-01` | 正式决定 `ItemCard` 是否包含 status/offerCount；如保留扩展，先更新冻结契约和所有构造点，禁止继续隐式扩展 | 契约、模型、Repository 和 Adapter 一致，完整编译通过 |
+| 8 | `AUTH-03/INT-03` | 统一 Activity 与 Validators 规则；昵称/WhatsApp/商品/金额错误落到字段；数据库异常映射稳定错误码；可见文本迁入 resources | 非法输入不触发 SQL；无 SQLite 异常文本泄露；字段错误和 loading 状态设备验收通过 |
+| 9 | `TEST-AUTH-01/TEST-ITEM-01/TEST-TRADE-01/02` | 删除模板测试依赖，建立纯 Java 工具测试和 Android Repository/SQLite 仪器测试 | 第 14.2 节 A/I/T 用例有自动化覆盖或明确手工记录，`assembleDebug`、unit、connected tests 全部通过 |
+
+UI 并行规则：
+
+- `UI-04` 和 `UI-05` 可与顺序 1-5 并行，但只能使用冻结 View ID 和 Repository 接口，不得在 UI 中补 SQL 或复制业务规则。
+- `UI-06` 在 `TRADE-02/03` 行为冻结后完成，明确区分可输入金额的 Make Offer 与固定标价的 Buy Now。
+- `UI-07` 在 `TRADE-07` 和 `TRADE-06/CONTRACT-01` 通过后完成，避免按错误联系人和状态语义返工。
+- `INT-01` Alice/Bob 11 步流程通过后再做 `UI-08` 全局视觉收尾；视觉优化不得掩盖未通过的业务状态。
+- 每个修复任务使用独立分支和 PR；合并后由另一名成员按对应完成证据复核，再更新任务为 `DONE`。
 
 ---
 
