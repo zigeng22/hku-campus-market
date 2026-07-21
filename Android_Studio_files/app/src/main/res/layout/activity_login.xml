@@ -119,6 +119,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_extra_small"
                 android:text="@string/action_open_sign_up" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonPrepareDemo"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_small"
+                android:text="@string/action_prepare_demo_data"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
