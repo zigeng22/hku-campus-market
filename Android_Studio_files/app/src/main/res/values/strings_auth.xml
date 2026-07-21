@@ -13,4 +13,7 @@
     <string name="sign_up_subtitle">Use a nickname and WhatsApp number for campus handover.</string>
     <string name="action_sign_up">Create account</string>
     <string name="action_back_to_login">Back to sign in</string>
+    <string name="action_prepare_demo_data">Prepare demo data</string>
+    <string name="demo_data_ready">Demo ready. AliceDemo and BobDemo use password demo123.</string>
+    <string name="demo_data_failed">Could not prepare demo data. Clear App Data and try again.</string>
 </resources>

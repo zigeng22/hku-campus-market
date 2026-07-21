@@ -18,6 +18,7 @@ import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.model.User;
 import com.example.a7506_project.ui.home.HomeActivity;
+import com.example.a7506_project.util.DemoDataSeeder;
 import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -32,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private ScrollView rootLogin;
     private int imeInsetBottom;
     private MaterialButton buttonLogin;
+    private MaterialButton buttonPrepareDemo;
     private View progressLogin;
 
     @Override
@@ -47,12 +49,17 @@ public class LoginActivity extends AppCompatActivity {
         layoutNickname = findViewById(R.id.layoutNickname);
         layoutPassword = findViewById(R.id.layoutPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
+        buttonPrepareDemo = findViewById(R.id.buttonPrepareDemo);
         progressLogin = findViewById(R.id.progressLogin);
 
         findViewById(R.id.buttonOpenSignUp).setOnClickListener(view ->
                 startActivity(new Intent(this, SignUpActivity.class)));
 
         buttonLogin.setOnClickListener(view -> performLogin());
+        if (getResources().getBoolean(R.bool.enable_demo_setup)) {
+            buttonPrepareDemo.setVisibility(View.VISIBLE);
+            buttonPrepareDemo.setOnClickListener(view -> prepareDemoData());
+        }
         inputNickname.setOnFocusChangeListener(this::onInputFocusChanged);
         inputPassword.setOnFocusChangeListener(this::onInputFocusChanged);
         inputPassword.setOnEditorActionListener((view, actionId, event) -> {
@@ -100,7 +107,22 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setLoading(boolean loading) {
         buttonLogin.setEnabled(!loading);
+        buttonPrepareDemo.setEnabled(!loading);
         progressLogin.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
+    private void prepareDemoData() {
+        setLoading(true);
+        boolean prepared = DemoDataSeeder.prepare(this, RepositoryProvider.get(this));
+        setLoading(false);
+
+        if (prepared) {
+            inputNickname.setText(DemoDataSeeder.ALICE_NICKNAME);
+            inputPassword.setText(DemoDataSeeder.DEMO_PASSWORD);
+            Toast.makeText(this, R.string.demo_data_ready, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.demo_data_failed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void navigateToHome() {
