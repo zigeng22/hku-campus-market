@@ -1,7 +1,7 @@
 # HKU Campus Market：COMP7506D 小组项目总开发计划
 
 > 文档状态：唯一有效开发基线（Single Source of Truth）
-> 版本：1.9
+> 版本：1.10
 > 最后更新：2026-07-22
 > Android 工程：`E:\7506_project\Android_Studio_files`
 > 适用对象：4 人小组、Codex/其他代码 Agent、代码审查者、测试与演示负责人
@@ -819,27 +819,27 @@ flowchart LR
 |---|---|---|---|---|
 | UI-01 | DONE | 统一颜色、字体层级、间距、按钮和输入框风格 | CONTRACT-02 | 2026-07-20 完成 HKU Campus Editorial 色板、日夜主题、8dp 组件样式和尺寸 token；API 36 模拟器 360x800 与 411x914 日/夜模式截图验收通过，无重叠、截断或系统栏对比度问题；assemble/test/lint/diff-check 通过 |
 | UI-02 | DONE | 完成 Login/Sign Up XML | CONTRACT-02, UI-01 | 原创校园 hero、响应式滚动表单、密码隐藏/切换、Autofill、loading 和稳定字段错误区已完成；360x800 实测文本/数字键盘、IME Done、底部字段自动滚动、注册登录及日夜模式通过，固定契约 ID 未变 |
-| AUTH-01 | IN PROGRESS | 实现 `users` schema、PasswordHasher、用户模型映射 | CONTRACT-01 | users schema、PBKDF2 和模型映射已实现；2026-07-22 基础注册、认证和 getUserById 设备测试通过，待当前 PR 合并后改为 DONE |
+| AUTH-01 | DONE | 实现 `users` schema、PasswordHasher、用户模型映射 | CONTRACT-01 | PR #7 已于 2026-07-22 合并到 `main`（merge `f03afff`）；users schema、PBKDF2、模型映射及基础注册/读取测试通过 |
 | AUTH-02 | DONE | 实现 SessionManager 与 MainActivity 路由 | ARCH-02 | PR #6 已于 2026-07-22 合并到 `main`（merge `b5309a2`）；启动时通过 Repository 验证 session userId，2 个路由测试及全量 22 个仪器测试通过 |
-| AUTH-03 | IN PROGRESS | 实现注册校验和唯一昵称 | AUTH-01, UI-02 | WhatsApp 非数字输入改为字段级拦截，昵称补 20 字符上限，重复昵称回显到昵称字段；提示已迁入 strings，待当前 PR 合并后改为 DONE |
+| AUTH-03 | DONE | 实现注册校验和唯一昵称 | AUTH-01, UI-02 | PR #7 已合并；WhatsApp 非数字输入字段级拦截、昵称长度校验和重复昵称字段提示已完成 |
 | AUTH-04 | IN PROGRESS | 实现登录/退出流程 | AUTH-01, AUTH-02, UI-02 | 登录、退出和清栈已连接；正确/错误凭证 Repository 测试及 AUTH-02 路由测试通过，仍需最终 Alice/Bob 设备流程验收 |
-| TEST-AUTH-01 | IN PROGRESS | Validators/密码/Repository 认证测试 | AUTH-03, AUTH-04 | 4 个基础测试覆盖注册/读取、大小写无关的重复昵称、正确/错误凭证和常见非法输入；Medium_Phone API 36 通过，待当前 PR 合并后改为 DONE |
+| TEST-AUTH-01 | DONE | Validators/密码/Repository 认证测试 | AUTH-03, AUTH-04 | PR #7 已合并；4 个基础测试覆盖注册/读取、重复昵称、正确/错误凭证和常见非法输入 |
 
 ### Phase 2：商品发布、首页和详情
 
 | ID | 状态 | 任务 | 依赖 | 交付物与验收 |
 |---|---|---|---|---|
 | UI-03 | DONE | Home、row_item、空状态 XML | CONTRACT-02, UI-01 | 首页工具栏、搜索区、列表标题、商品卡片、空状态、双 FAB 和 RecyclerView 已完成；API 36 模拟器分别用空数据和真实商品在 360x800、411x914 及日/夜模式验收，文本、价格、类别、卖家和操作按钮无重叠或截断 |
-| UI-04 | TODO | Post/Edit Item XML | CONTRACT-02, UI-01 | 表单可滚动；键盘不遮挡保存；图片占位稳定 |
-| UI-05 | TODO | Item Detail XML 与买卖双方 action group | CONTRACT-02, UI-01 | 两组操作互斥；长标题/描述不溢出 |
-| ITEM-01 | IN PROGRESS | 实现 items schema、索引和 Item 映射 | AUTH-01 | 2026-07-22 `fix/p0-schema-contract-stability` 已完成 schema v2：补 price/status CHECK、首页及卖家复合索引，并实现保留数据的 v1→v2 migration；4 个约束/索引/升级测试在 Medium_Phone API 36 通过，待 PR 合并后改为 DONE |
-| ITEM-02 | IN PROGRESS | 实现 create/update/softDelete/getItem | ITEM-01 | 2026-07-22 已补空 draft、非法 seller 和 null category 防护，并将软删除商品与拒绝 Pending 报价纳入同一 transaction；8 个 CRUD/owner/ACTIVE/异常回滚测试通过，待 PR 合并后改为 DONE |
+| UI-04 | IN PROGRESS | Post/Edit Item XML | CONTRACT-02, UI-01 | `feat/ui-item-flows` 已完成响应式滚动表单、固定保存区、图片预览、字段级错误和返回工具栏；411x914 实际发布/编辑与类别回填通过，待 PR 合并后改为 DONE |
+| UI-05 | IN PROGRESS | Item Detail XML 与买卖双方 action group | CONTRACT-02, UI-01 | `feat/ui-item-flows` 已完成商品图、类别/价格/卖家/描述层级、固定 action 区和非 ACTIVE 提示；411x914 卖家详情实测无重叠，待 PR 合并后改为 DONE |
+| ITEM-01 | DONE | 实现 items schema、索引和 Item 映射 | AUTH-01 | PR #7 已合并；schema v2 的 CHECK、复合索引、保留数据 migration 及 4 个数据库测试通过 |
+| ITEM-02 | DONE | 实现 create/update/softDelete/getItem | ITEM-01 | PR #7 已合并；空输入/非法 seller 防护、原子软删除及 8 个 CRUD/权限测试通过 |
 | ITEM-03 | DONE | 实现 ACTIVE 搜索、seller listings 和 ItemCard 查询 | ITEM-01 | PR #6 已于 2026-07-22 合并到 `main`（merge `b5309a2`）；name/description 搜索、稳定排序和 4 个 SQLite 查询测试通过 |
 | ITEM-04 | IN PROGRESS | 实现 HomeActivity 和 ItemAdapter | UI-03, ITEM-03, AUTH-04 | onResume、搜索、空状态和详情导航已连接；待 ITEM-03 修复及设备验收 |
-| ITEM-05 | IN PROGRESS | 实现 PostEditItemActivity 表单与金额转换 | UI-04, ITEM-02 | 新建/编辑表单和金额转换已连接；待边界测试、设备验收及可见文本资源化 |
+| ITEM-05 | IN PROGRESS | 实现 PostEditItemActivity 表单与金额转换 | UI-04, ITEM-02 | 发布/编辑实机流程已通过；修复数据库类别代码回填显示、价格两位小数、字段错误和可见文本资源化，待当前 PR 合并后改为 DONE |
 | ITEM-06 | DONE | 实现相册选择和 URI 持久化 | ITEM-05 | PR #6 已于 2026-07-22 合并到 `main`（merge `b5309a2`）；持久权限异常与失效 URI 统一回退占位图，3 个 URI 测试及全量回归通过 |
 | ITEM-07 | IN PROGRESS | 实现 ItemDetailActivity 身份视图 | UI-05, ITEM-02 | seller/buyer action、编辑、删除和 offer 导航已连接；待状态与设备验收 |
-| TEST-ITEM-01 | IN PROGRESS | 商品 Repository 和金额/搜索测试 | ITEM-02, ITEM-03 | 搜索测试已覆盖 name/description、大小写、分类、ACTIVE、空关键字和稳定排序；新增 8 个 CRUD 测试覆盖映射/default、非法 draft/seller/price、owner、ACTIVE、删除报价联动及异常回滚，待 PR 合并后改为 DONE |
+| TEST-ITEM-01 | DONE | 商品 Repository 和金额/搜索测试 | ITEM-02, ITEM-03 | PR #7 已合并；搜索及 8 个 CRUD/owner/ACTIVE 测试全部通过 |
 
 ### Phase 3：报价、成交与管理中心
 
@@ -847,16 +847,16 @@ flowchart LR
 |---|---|---|---|---|
 | UI-06 | TODO | Make Offer Dialog 与 row_offer XML | UI-01, UI-05 | 金额输入、类型、状态和 Accept 布局清楚 |
 | UI-07 | TODO | Management/Listing/Participation layouts | UI-01, CONTRACT-02 | 两个 Tab、三种 row、空状态和联系方式布局完整 |
-| TRADE-01 | IN PROGRESS | 实现 offers/trade_transactions schema 与索引 | ITEM-01 | 2026-07-22 `fix/p0-schema-contract-stability` 已完成 schema v2：补 amount/type/status/final price CHECK、报价与成交索引，并实现保留数据的 v1→v2 migration；4 个约束/索引/升级测试在 Medium_Phone API 36 通过，待 PR 合并后改为 DONE |
+| TRADE-01 | DONE | 实现 offers/trade_transactions schema 与索引 | ITEM-01 | PR #7 已合并；offers/transactions CHECK、查询索引、migration 和数据库测试通过 |
 | TRADE-02 | DONE | 实现 placeOffer/Buy Now 规则 | TRADE-01, ITEM-02 | PR #4 已于 2026-07-21 合并到 `main`（merge `6db0f08`）；Repository 校验 offer type 并强制 Buy Now 使用商品标价；Medium_Phone API 36 全部 11 个仪器测试通过 |
 | TRADE-03 | DONE | 在 ItemDetail 连接 Offer Dialog/Buy Now | UI-06, TRADE-02 | PR #5 已于 2026-07-22 合并到 `main`（merge `7d8e960`）；Buy Now 使用固定标价确认流程，Make Offer 保留金额输入和字段错误；2 个 UI 流程测试及全量 13 个仪器测试在 Medium_Phone API 36 通过 |
 | TRADE-04 | IN PROGRESS | 实现 seller offer list 查询与 OfferReviewActivity | UI-06, TRADE-01 | seller 查询、列表和 Pending Accept 已实现；非 owner 只返回空列表，待明确拒绝反馈和测试 |
-| TRADE-05 | IN PROGRESS | 实现原子 acceptOffer 事务 | TRADE-01, ITEM-02 | 六步 SQLite transaction 已实现；2026-07-22 新增成功成交、非 owner、重复接受及强制 transaction insert 异常回滚 4 个测试，均在 Medium_Phone API 36 通过，待 PR 合并后改为 DONE |
-| TRADE-06 | IN PROGRESS | 实现 My Listings 数据与列表交互 | UI-07, ITEM-03, TRADE-04 | 2026-07-22 `fix/p0-schema-contract-stability` 已将 status/offerCount 正式纳入 ItemCard 契约 1.1，首页与卖家查询返回一致真实值；ACTIVE/SOLD/Pending count/owner 共 3 个测试在 Medium_Phone API 36 通过，待 PR 合并后改为 DONE |
+| TRADE-05 | DONE | 实现原子 acceptOffer 事务 | TRADE-01, ITEM-02 | PR #7 已合并；成功成交、非 owner、重复接受和 transaction 异常回滚 4 个测试通过 |
+| TRADE-06 | DONE | 实现 My Listings 数据与列表交互 | UI-07, ITEM-03, TRADE-04 | PR #7 已合并；ItemCard 契约 1.1、首页/卖家查询真实状态和 Pending 数及 3 个列表测试通过 |
 | TRADE-07 | DONE | 实现 My Activity 和成交联系人查询 | UI-07, TRADE-05 | PR #3 已于 2026-07-21 合并到 `main`（merge `ae6f7ac`）；按 accepted offer 精确匹配 transaction，Pending/Rejected 隐藏联系方式；真实 SQLite 双买家测试和 Adapter 复用测试共 4 个仪器测试通过 |
 | TRADE-08 | IN PROGRESS | 完成 ManagementActivity Tab 切换 | TRADE-06, TRADE-07 | Tab、Adapter 切换和 onResume 已实现，TRADE-07 blocker 已清除；待 TRADE-06 契约处理及设备回归 |
 | TEST-TRADE-01 | DONE | 报价规则测试 | TRADE-02 | `MarketRepositoryOfferRulesTest` 的 7 个用例覆盖 Buy Now 固定标价、普通报价、非法类型/金额、自购、重复 Pending 和非 ACTIVE；PR #4 已合并，Medium_Phone API 36 执行通过 |
-| TEST-TRADE-02 | IN PROGRESS | 原子成交和权限测试 | TRADE-05, TRADE-07 | `MarketRepositoryAtomicTradeTest` 的 4 个用例覆盖一笔 ACCEPTED/transaction、其余 REJECTED、item SOLD、非 owner、重复接受及最后一步异常后的完整回滚；本地设备测试通过，待 PR 合并后改为 DONE |
+| TEST-TRADE-02 | DONE | 原子成交和权限测试 | TRADE-05, TRADE-07 | PR #7 已合并；4 个测试覆盖成交状态、权限、重复接受和异常回滚 |
 
 ### Phase 4：集成、稳定性和视觉收尾
 
@@ -1245,16 +1245,12 @@ Logcat 中从 FATAL EXCEPTION 开始的完整堆栈：[粘贴]
 
 Phase 0 已完成。2026-07-20 已从 GitHub 拉取 `finekiss` 的首批业务实现；当前重点从“继续生成完整功能”切换为“审查、修复、测试和集成”。
 
-按以下顺序执行，每次只向 Agent 分配一个任务 ID：
+同一轮可以在一个集成分支顺序完成多个紧密相关任务，但每组仍需有明确验收结果：
 
-1. `TRADE-07`：已由 PR #3 合并并通过联系人隐私回归测试，状态为 `DONE`。
-2. `TRADE-02/TEST-TRADE-01` 与 `TRADE-03`：PR #4、#5 已合并并更新为 `DONE`。
-3. `AUTH-02`、`ITEM-03`、`ITEM-06`：PR #6 已合并并更新为 `DONE`。
-4. `ITEM-01/TRADE-01`：schema v2 CHECK、复合索引、保留数据的 v1→v2 migration 及 4 个数据库测试已完成，待 PR 合并。
-5. `TRADE-06/CONTRACT-01`：ItemCard status/offerCount 契约 1.1、统一查询语义及 3 个 My Listings 数据测试已完成，待 PR 合并。
-6. `TRADE-05/TEST-TRADE-02`：原子成交成功、权限、重复确认和强制异常回滚共 4 个测试已完成，待 PR 合并。
-7. `AUTH-03/TEST-AUTH-01/INT-03`：常见注册/登录校验、字段错误、string resources 及 4 个认证测试已完成，待 PR 合并。
-8. `ITEM-02/TEST-ITEM-01`：空输入/非法 seller 防护、原子软删除及 8 个 CRUD/权限/回滚测试已完成，待 PR 合并。
-9. `INT-01`：在模拟器上从清空 App Data 开始跑完整 Alice/Bob 流程并记录结果。
+1. PR #3 至 #7 的认证、商品、报价、成交、schema 和回归任务已合并；对应任务已更新为 `DONE`。
+2. `UI-04/UI-05/ITEM-05`：当前 `feat/ui-item-flows` 已完成发布、编辑和详情页设计及真实商品流程验收，待 PR 合并。
+3. `UI-06/UI-07/TRADE-04/TRADE-08`：下一批统一整理报价审核和 Management 页面，使现有后端功能可清楚操作。
+4. `INT-01`：从清空 App Data 开始跑 Alice/Bob 主流程，优先修复普通操作中的 crash、错误状态和断开的导航。
+5. `UI-08/QA-01/QA-02`：只做主要尺寸视觉收尾和核心流程检查，不按商用产品标准扩展极端场景。
 
-UI 成员可以并行处理 `UI-01` 至 `UI-07`，但不得修改 Repository、schema、冻结 View ID 或状态常量。其他成员不要再次生成整套数据库或全部 Activity；必须基于 `24c9050` 的现有代码做小范围、可验证修复。
+UI 工作不得修改 Repository、schema、冻结 View ID 或状态常量。所有后续工作都必须基于最新 `main` 做小范围、可验证改动，不重新生成整套数据库或 Activity。

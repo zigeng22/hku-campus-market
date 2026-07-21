@@ -97,4 +97,16 @@
     <style name="TextAppearance.HkuMarket.EmptyState" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:textColor">@color/text_secondary</item>
     </style>
+
+    <style name="TextAppearance.HkuMarket.Eyebrow" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/brand_brick</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.HkuMarket.DetailTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
 </resources>

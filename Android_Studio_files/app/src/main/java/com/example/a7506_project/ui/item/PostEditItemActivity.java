@@ -2,11 +2,9 @@ package com.example.a7506_project.ui.item;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.widget.AutoCompleteTextView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,10 +17,16 @@ import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.ItemDraft;
+import com.example.a7506_project.util.CategoryFormatter;
 import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 import com.example.a7506_project.util.SessionManager;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Locale;
 
 public class PostEditItemActivity extends AppCompatActivity {
 
@@ -32,8 +36,10 @@ public class PostEditItemActivity extends AppCompatActivity {
     private long itemId;
 
     private TextInputEditText inputName, inputDescription, inputPrice;
+    private TextInputLayout layoutName, layoutPrice, layoutCategory;
     private AutoCompleteTextView dropdownCategory;
     private ImageView imagePreview;
+    private MaterialButton buttonSaveItem;
     private Uri selectedImageUri;
 
     private final ActivityResultLauncher<String[]> imagePickerLauncher =
@@ -63,13 +69,19 @@ public class PostEditItemActivity extends AppCompatActivity {
         editMode = getIntent().getBooleanExtra(AppContract.EXTRA_EDIT_MODE, false);
         itemId = getIntent().getLongExtra(AppContract.EXTRA_ITEM_ID, AppContract.INVALID_ID);
 
-        TextView title = findViewById(R.id.textPostEditTitle);
-        title.setText(editMode ? R.string.edit_item_title : R.string.post_item_title);
+        MaterialToolbar toolbar = findViewById(R.id.toolbarPostEdit);
+        toolbar.setTitle(editMode ? R.string.edit_item_title : R.string.post_item_title);
+        toolbar.setNavigationOnClickListener(view -> finish());
 
         imagePreview = findViewById(R.id.imagePreview);
         inputName = findViewById(R.id.inputItemName);
         inputDescription = findViewById(R.id.inputDescription);
         inputPrice = findViewById(R.id.inputPrice);
+        layoutName = findViewById(R.id.layoutItemName);
+        layoutPrice = findViewById(R.id.layoutItemPrice);
+        layoutCategory = findViewById(R.id.layoutCategory);
+        buttonSaveItem = findViewById(R.id.buttonSaveItem);
+        buttonSaveItem.setText(editMode ? R.string.save_changes : R.string.post_item_action);
 
         String[] categories = getResources().getStringArray(R.array.item_categories);
         dropdownCategory = findViewById(R.id.dropdownCategory);
@@ -79,7 +91,7 @@ public class PostEditItemActivity extends AppCompatActivity {
         findViewById(R.id.buttonChooseImage).setOnClickListener(view ->
                 imagePickerLauncher.launch(new String[]{"image/*"}));
 
-        findViewById(R.id.buttonSaveItem).setOnClickListener(view -> saveItem());
+        buttonSaveItem.setOnClickListener(view -> saveItem());
 
         if (editMode && itemId != AppContract.INVALID_ID) {
             loadExistingItem();
@@ -89,19 +101,19 @@ public class PostEditItemActivity extends AppCompatActivity {
     private void loadExistingItem() {
         Item item = repo.getItemById(itemId);
         if (item == null) {
-            Toast.makeText(this, "Item not found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.item_not_found, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
         if (item.getSellerId() != session.getCurrentUserId()) {
-            Toast.makeText(this, "You can only edit your own items.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.item_edit_not_owner, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
         inputName.setText(item.getName());
         inputDescription.setText(item.getDescription());
-        inputPrice.setText(String.valueOf(item.getPriceCents() / 100.0));
-        dropdownCategory.setText(item.getCategory(), false);
+        inputPrice.setText(String.format(Locale.US, "%.2f", item.getPriceCents() / 100.0));
+        dropdownCategory.setText(CategoryFormatter.displayName(this, item.getCategory()), false);
         if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
             boolean imageLoaded = ImageUriLoader.loadOrShowPlaceholder(
                     this, imagePreview, item.getImageUri(), R.drawable.ic_item_placeholder);
@@ -115,29 +127,30 @@ public class PostEditItemActivity extends AppCompatActivity {
         String priceText = inputPrice.getText().toString().trim();
         String category = dropdownCategory.getText().toString();
 
+        layoutName.setError(null);
+        layoutPrice.setError(null);
+        layoutCategory.setError(null);
+
         if (name.isEmpty()) {
-            inputName.setError("Item name is required");
+            layoutName.setError(getString(R.string.item_name_required));
+            inputName.requestFocus();
             return;
         }
         if (priceText.isEmpty()) {
-            inputPrice.setError("Price is required");
+            layoutPrice.setError(getString(R.string.item_price_required));
+            inputPrice.requestFocus();
             return;
         }
-        double price;
-        try {
-            price = Double.parseDouble(priceText);
-        } catch (NumberFormatException e) {
-            inputPrice.setError("Invalid price");
+        long priceCents = MoneyFormatter.hkdToCents(priceText);
+        if (priceCents <= 0) {
+            layoutPrice.setError(getString(R.string.item_price_invalid));
+            inputPrice.requestFocus();
             return;
         }
-        if (price <= 0) {
-            inputPrice.setError("Price must be > 0");
-            return;
-        }
-        long priceCents = MoneyFormatter.hkdToCents(price);
 
         if (category.isEmpty()) {
-            dropdownCategory.setError("Select a category");
+            layoutCategory.setError(getString(R.string.item_category_required));
+            dropdownCategory.requestFocus();
             return;
         }
 
@@ -152,18 +165,18 @@ public class PostEditItemActivity extends AppCompatActivity {
         if (editMode) {
             boolean ok = repo.updateItem(itemId, userId, draft);
             if (ok) {
-                Toast.makeText(this, "Item updated.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.item_updated, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Toast.makeText(this, "Update failed. Only active items you own can be edited.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.item_update_failed, Toast.LENGTH_SHORT).show();
             }
         } else {
             long newId = repo.createItem(userId, draft);
             if (newId != AppContract.INVALID_ID) {
-                Toast.makeText(this, "Item posted!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.item_posted, Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Toast.makeText(this, "Failed to post item.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.item_post_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a7506_project.R;
 import com.example.a7506_project.model.ItemCard;
+import com.example.a7506_project.util.CategoryFormatter;
 import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 
@@ -49,7 +50,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         ItemCard item = items.get(position);
         holder.name.setText(item.getName());
         holder.price.setText(MoneyFormatter.centsToHkd(item.getPriceCents()));
-        holder.category.setText(item.getCategory());
+        holder.category.setText(CategoryFormatter.displayName(holder.itemView.getContext(), item.getCategory()));
         holder.seller.setText(holder.itemView.getContext().getString(R.string.seller_prefix, item.getSellerNickname()));
 
         ImageUriLoader.loadOrShowPlaceholder(

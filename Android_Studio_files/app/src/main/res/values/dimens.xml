@@ -15,5 +15,6 @@
     <dimen name="home_item_min_height">128dp</dimen>
     <dimen name="home_list_bottom_padding">88dp</dimen>
     <dimen name="row_image_size">104dp</dimen>
+    <dimen name="item_form_image_height">208dp</dimen>
     <dimen name="detail_image_height">240dp</dimen>
 </resources>
