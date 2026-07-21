@@ -1,6 +1,5 @@
 package com.example.a7506_project.ui.home;
 
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a7506_project.R;
 import com.example.a7506_project.model.ItemCard;
+import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 
 import java.util.ArrayList;
@@ -52,11 +52,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.category.setText(item.getCategory());
         holder.seller.setText(holder.itemView.getContext().getString(R.string.seller_prefix, item.getSellerNickname()));
 
-        if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
-            holder.image.setImageURI(Uri.parse(item.getImageUri()));
-        } else {
-            holder.image.setImageResource(android.R.drawable.ic_menu_gallery);
-        }
+        ImageUriLoader.loadOrShowPlaceholder(
+                holder.itemView.getContext(),
+                holder.image,
+                item.getImageUri(),
+                R.drawable.ic_item_placeholder);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(item);

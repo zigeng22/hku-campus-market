@@ -18,6 +18,7 @@
     <string name="choose_image">Choose image</string>
     <string name="save_item">Save item</string>
     <string name="item_image_description">Item image</string>
+    <string name="image_unavailable">This image is no longer available. Choose another image.</string>
     <string name="item_detail_title">Item details</string>
     <string name="sample_item_name">Data Structures Textbook</string>
     <string name="sample_item_price">HK$120.00</string>

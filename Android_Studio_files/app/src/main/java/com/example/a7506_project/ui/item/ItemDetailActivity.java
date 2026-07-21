@@ -1,7 +1,6 @@
 package com.example.a7506_project.ui.item;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.User;
 import com.example.a7506_project.model.result.PlaceOfferResult;
 import com.example.a7506_project.ui.management.OfferReviewActivity;
+import com.example.a7506_project.util.ImageUriLoader;
 import com.example.a7506_project.util.MoneyFormatter;
 import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
@@ -86,11 +86,8 @@ public class ItemDetailActivity extends AppCompatActivity {
             textSellerName.setText(getString(R.string.seller_prefix, seller.getNickname()));
         }
 
-        if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
-            imageItem.setImageURI(Uri.parse(item.getImageUri()));
-        } else {
-            imageItem.setImageResource(android.R.drawable.ic_menu_gallery);
-        }
+        ImageUriLoader.loadOrShowPlaceholder(
+                this, imageItem, item.getImageUri(), R.drawable.ic_item_placeholder);
 
         // Show different actions based on whether user is seller or buyer
         if (item.getSellerId() == currentUserId) {

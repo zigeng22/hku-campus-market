@@ -211,8 +211,11 @@ public class MarketRepositoryImpl implements MarketRepository {
         args.add(AppContract.ITEM_ACTIVE);
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND i." + Items.NAME + " LIKE ?");
-            args.add("%" + keyword.trim() + "%");
+            String keywordPattern = "%" + keyword.trim() + "%";
+            sql.append(" AND (i." + Items.NAME + " LIKE ? OR i."
+                    + Items.DESCRIPTION + " LIKE ?)");
+            args.add(keywordPattern);
+            args.add(keywordPattern);
         }
 
         if (category != null && !category.equals(AppContract.CATEGORY_ALL)) {
@@ -221,11 +224,14 @@ public class MarketRepositoryImpl implements MarketRepository {
         }
 
         if (sortOrder == SortOrder.PRICE_LOW_TO_HIGH) {
-            sql.append(" ORDER BY i." + Items.PRICE_CENTS + " ASC");
+            sql.append(" ORDER BY i." + Items.PRICE_CENTS + " ASC, i."
+                    + Items.CREATED_AT + " DESC, i." + Items._ID + " DESC");
         } else if (sortOrder == SortOrder.PRICE_HIGH_TO_LOW) {
-            sql.append(" ORDER BY i." + Items.PRICE_CENTS + " DESC");
+            sql.append(" ORDER BY i." + Items.PRICE_CENTS + " DESC, i."
+                    + Items.CREATED_AT + " DESC, i." + Items._ID + " DESC");
         } else {
-            sql.append(" ORDER BY i." + Items.CREATED_AT + " DESC");
+            sql.append(" ORDER BY i." + Items.CREATED_AT + " DESC, i."
+                    + Items._ID + " DESC");
         }
 
         Cursor cursor = db.rawQuery(sql.toString(), args.toArray(new String[0]));
