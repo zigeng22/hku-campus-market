@@ -281,7 +281,11 @@ public class MarketRepositoryImpl implements MarketRepository {
 
     @Override
     public PlaceOfferResult placeOffer(long itemId, long buyerId, long amountCents, String offerType) {
-        if (amountCents <= 0) return PlaceOfferResult.failure(RepositoryResultCode.INVALID_PRICE);
+        boolean isNegotiated = AppContract.OFFER_TYPE_NEGOTIATED.equals(offerType);
+        boolean isBuyNow = AppContract.OFFER_TYPE_BUY_NOW.equals(offerType);
+        if (!isNegotiated && !isBuyNow) {
+            return PlaceOfferResult.failure(RepositoryResultCode.INVALID_INPUT);
+        }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -292,6 +296,11 @@ public class MarketRepositoryImpl implements MarketRepository {
             return PlaceOfferResult.failure(RepositoryResultCode.ITEM_NOT_ACTIVE);
         if (item.getSellerId() == buyerId)
             return PlaceOfferResult.failure(RepositoryResultCode.CANNOT_OFFER_OWN_ITEM);
+
+        if (isNegotiated && amountCents <= 0) {
+            return PlaceOfferResult.failure(RepositoryResultCode.INVALID_PRICE);
+        }
+        long effectiveAmountCents = isBuyNow ? item.getPriceCents() : amountCents;
 
         // check no duplicate pending offer
         Cursor dup = db.rawQuery(
@@ -308,7 +317,7 @@ public class MarketRepositoryImpl implements MarketRepository {
         ContentValues values = new ContentValues();
         values.put(Offers.ITEM_ID, itemId);
         values.put(Offers.BUYER_ID, buyerId);
-        values.put(Offers.AMOUNT_CENTS, amountCents);
+        values.put(Offers.AMOUNT_CENTS, effectiveAmountCents);
         values.put(Offers.TYPE, offerType);
         values.put(Offers.STATUS, AppContract.OFFER_PENDING);
 
