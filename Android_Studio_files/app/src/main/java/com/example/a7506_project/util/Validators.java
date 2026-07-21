@@ -41,7 +41,7 @@ public final class Validators {
             return "WhatsApp must contain only digits.";
         }
         if (digits.length() < 8 || digits.length() > 15) {
-            return "WhatsApp must be 8–15 digits.";
+            return "WhatsApp must be 8-15 digits.";
         }
         return null;
     }

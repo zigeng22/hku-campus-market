@@ -72,12 +72,12 @@ public class LoginActivity extends AppCompatActivity {
         layoutPassword.setError(null);
 
         if (nickname.isEmpty()) {
-            layoutNickname.setError("Nickname is required");
+            layoutNickname.setError(getString(R.string.error_nickname_required));
             inputNickname.requestFocus();
             return;
         }
         if (password.isEmpty()) {
-            layoutPassword.setError("Password is required");
+            layoutPassword.setError(getString(R.string.error_password_required));
             inputPassword.requestFocus();
             return;
         }
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
             session.login(user.getId());
             navigateToHome();
         } else {
-            Toast.makeText(this, "Invalid nickname or password.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_invalid_credentials, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -87,43 +87,43 @@ public class SignUpActivity extends AppCompatActivity {
 
         // client-side validation
         if (nickname.isEmpty()) {
-            layoutNickname.setError("Nickname is required");
+            layoutNickname.setError(getString(R.string.error_nickname_required));
             inputNickname.requestFocus();
             return;
         }
-        if (nickname.length() < 3) {
-            layoutNickname.setError("At least 3 characters");
+        if (nickname.length() < 3 || nickname.length() > 20) {
+            layoutNickname.setError(getString(R.string.error_nickname_length));
             inputNickname.requestFocus();
             return;
         }
         if (!nickname.matches("[a-zA-Z0-9_]+")) {
-            layoutNickname.setError("Only letters, numbers, underscores");
+            layoutNickname.setError(getString(R.string.error_nickname_characters));
             inputNickname.requestFocus();
             return;
         }
         if (password.isEmpty()) {
-            layoutPassword.setError("Password is required");
+            layoutPassword.setError(getString(R.string.error_password_required));
             inputPassword.requestFocus();
             return;
         }
         if (password.length() < 6) {
-            layoutPassword.setError("At least 6 characters");
+            layoutPassword.setError(getString(R.string.error_password_length));
             inputPassword.requestFocus();
             return;
         }
         if (!password.equals(confirmPassword)) {
-            layoutConfirmPassword.setError("Passwords do not match");
+            layoutConfirmPassword.setError(getString(R.string.error_password_mismatch));
             inputConfirmPassword.requestFocus();
             return;
         }
         if (whatsapp.isEmpty()) {
-            layoutWhatsapp.setError("WhatsApp number is required");
+            layoutWhatsapp.setError(getString(R.string.error_whatsapp_required));
             inputWhatsapp.requestFocus();
             return;
         }
         String digits = whatsapp.replaceAll("[\\s\\-()+]", "");
-        if (digits.length() < 8 || digits.length() > 15) {
-            layoutWhatsapp.setError("8-15 digits");
+        if (!digits.matches("\\d{8,15}")) {
+            layoutWhatsapp.setError(getString(R.string.error_whatsapp_format));
             inputWhatsapp.requestFocus();
             return;
         }
@@ -143,14 +143,15 @@ public class SignUpActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            String msg;
             if (result.getCode() == RepositoryResultCode.DUPLICATE_NICKNAME) {
-                msg = "This nickname is already taken.";
-            } else if (result.getCode() == RepositoryResultCode.INVALID_INPUT) {
-                msg = "Please check your input and try again.";
-            } else {
-                msg = "Registration failed. Please try again.";
+                layoutNickname.setError(getString(R.string.error_duplicate_nickname));
+                inputNickname.requestFocus();
+                return;
             }
+            int messageId = result.getCode() == RepositoryResultCode.INVALID_INPUT
+                    ? R.string.error_registration_input
+                    : R.string.error_registration_failed;
+            String msg = getString(messageId);
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         }
     }
