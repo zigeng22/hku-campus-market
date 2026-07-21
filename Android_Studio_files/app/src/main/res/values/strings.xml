@@ -4,4 +4,16 @@
     <string name="action_close">Close</string>
     <string name="action_logout">Log out</string>
     <string name="phase_zero_preview">Phase 0 navigation preview</string>
+    <string name="error_nickname_required">Nickname is required</string>
+    <string name="error_nickname_length">Use 3-20 characters</string>
+    <string name="error_nickname_characters">Only letters, numbers, and underscores</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_length">Use at least 6 characters</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="error_whatsapp_required">WhatsApp number is required</string>
+    <string name="error_whatsapp_format">Enter 8-15 digits</string>
+    <string name="error_duplicate_nickname">This nickname is already taken</string>
+    <string name="error_invalid_credentials">Invalid nickname or password.</string>
+    <string name="error_registration_input">Please check your input and try again.</string>
+    <string name="error_registration_failed">Registration failed. Please try again.</string>
 </resources>

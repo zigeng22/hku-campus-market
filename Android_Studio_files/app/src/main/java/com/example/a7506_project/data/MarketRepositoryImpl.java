@@ -123,6 +123,7 @@ public class MarketRepositoryImpl implements MarketRepository {
 
     @Override
     public long createItem(long sellerId, ItemDraft draft) {
+        if (draft == null) return AppContract.INVALID_ID;
         String validationError = Validators.validateItemName(draft.getName());
         if (validationError != null) return AppContract.INVALID_ID;
         validationError = Validators.validatePriceCents(draft.getPriceCents());
@@ -138,11 +139,13 @@ public class MarketRepositoryImpl implements MarketRepository {
         values.put(Items.CATEGORY, draft.getCategory() != null ? draft.getCategory() : AppContract.CATEGORY_OTHERS);
         values.put(Items.STATUS, AppContract.ITEM_ACTIVE);
 
-        return db.insertOrThrow(Items.TABLE, null, values);
+        long itemId = db.insert(Items.TABLE, null, values);
+        return itemId == -1 ? AppContract.INVALID_ID : itemId;
     }
 
     @Override
     public boolean updateItem(long itemId, long sellerId, ItemDraft draft) {
+        if (draft == null) return false;
         String validationError = Validators.validateItemName(draft.getName());
         if (validationError != null) return false;
         validationError = Validators.validatePriceCents(draft.getPriceCents());
@@ -154,7 +157,8 @@ public class MarketRepositoryImpl implements MarketRepository {
         values.put(Items.DESCRIPTION, draft.getDescription() != null ? draft.getDescription() : "");
         values.put(Items.PRICE_CENTS, draft.getPriceCents());
         values.put(Items.IMAGE_URI, draft.getImageUri());
-        values.put(Items.CATEGORY, draft.getCategory());
+        values.put(Items.CATEGORY,
+                draft.getCategory() != null ? draft.getCategory() : AppContract.CATEGORY_OTHERS);
 
         int rows = db.update(Items.TABLE, values,
                 Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND " + Items.STATUS + " = ?",
@@ -165,22 +169,31 @@ public class MarketRepositoryImpl implements MarketRepository {
     @Override
     public boolean softDeleteItem(long itemId, long sellerId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(Items.STATUS, AppContract.ITEM_DELETED);
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(Items.STATUS, AppContract.ITEM_DELETED);
 
-        int rows = db.update(Items.TABLE, values,
-                Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND " + Items.STATUS + " = ?",
-                new String[]{String.valueOf(itemId), String.valueOf(sellerId), AppContract.ITEM_ACTIVE});
+            int rows = db.update(Items.TABLE, values,
+                    Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND " + Items.STATUS + " = ?",
+                    new String[]{String.valueOf(itemId), String.valueOf(sellerId), AppContract.ITEM_ACTIVE});
+            if (rows == 0) {
+                return false;
+            }
 
-        if (rows > 0) {
-            // reject all pending offers on this item
             ContentValues offerValues = new ContentValues();
             offerValues.put(Offers.STATUS, AppContract.OFFER_REJECTED);
             db.update(Offers.TABLE, offerValues,
                     Offers.ITEM_ID + " = ? AND " + Offers.STATUS + " = ?",
                     new String[]{String.valueOf(itemId), AppContract.OFFER_PENDING});
+
+            db.setTransactionSuccessful();
+            return true;
+        } catch (RuntimeException exception) {
+            return false;
+        } finally {
+            db.endTransaction();
         }
-        return rows > 0;
     }
 
     @Override
@@ -204,7 +217,11 @@ public class MarketRepositoryImpl implements MarketRepository {
         List<String> args = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT i." + Items._ID + ", i." + Items.NAME + ", i." + Items.PRICE_CENTS + ", "
-                        + "i." + Items.IMAGE_URI + ", i." + Items.CATEGORY + ", u." + Users.NICKNAME
+                        + "i." + Items.IMAGE_URI + ", i." + Items.CATEGORY + ", u." + Users.NICKNAME + ", "
+                        + "i." + Items.STATUS + ", "
+                        + "(SELECT COUNT(*) FROM " + Offers.TABLE + " o"
+                        + " WHERE o." + Offers.ITEM_ID + " = i." + Items._ID
+                        + " AND o." + Offers.STATUS + " = '" + AppContract.OFFER_PENDING + "') AS offer_count"
                         + " FROM " + Items.TABLE + " i"
                         + " JOIN " + Users.TABLE + " u ON i." + Items.SELLER_ID + " = u." + Users._ID
                         + " WHERE i." + Items.STATUS + " = ?");
@@ -244,7 +261,8 @@ public class MarketRepositoryImpl implements MarketRepository {
                     cursor.getString(3),
                     cursor.getString(4),
                     cursor.getString(5),
-                    "", 0  // searchActiveItems doesn't need status/offerCount
+                    cursor.getString(6),
+                    cursor.getInt(7)
             ));
         }
         cursor.close();
@@ -259,11 +277,11 @@ public class MarketRepositoryImpl implements MarketRepository {
                 + "i." + Items.STATUS + ", "
                 + "(SELECT COUNT(*) FROM " + Offers.TABLE + " o"
                 + " WHERE o." + Offers.ITEM_ID + " = i." + Items._ID
-                + " AND o." + Offers.STATUS + " = 'PENDING') AS offer_count"
+                + " AND o." + Offers.STATUS + " = '" + AppContract.OFFER_PENDING + "') AS offer_count"
                 + " FROM " + Items.TABLE + " i"
                 + " JOIN " + Users.TABLE + " u ON i." + Items.SELLER_ID + " = u." + Users._ID
                 + " WHERE i." + Items.SELLER_ID + " = ?"
-                + " ORDER BY i." + Items.CREATED_AT + " DESC";
+                + " ORDER BY i." + Items.CREATED_AT + " DESC, i." + Items._ID + " DESC";
 
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(sellerId)});
         List<ItemCard> result = new ArrayList<>();
