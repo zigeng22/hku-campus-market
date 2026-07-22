@@ -7,22 +7,30 @@ import com.example.a7506_project.contract.AppContract;
 import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.model.ItemCard;
 import com.example.a7506_project.model.ItemDraft;
+import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.OfferSummary;
 import com.example.a7506_project.model.User;
 import com.example.a7506_project.model.result.PlaceOfferResult;
 import com.example.a7506_project.model.result.RegistrationResult;
 
 import java.util.List;
+import java.util.Map;
 
 public final class DemoDataSeeder {
     public static final String ALICE_NICKNAME = "AliceDemo";
     public static final String BOB_NICKNAME = "BobDemo";
+    public static final String CAROL_NICKNAME = "CarolDemo";
+    public static final String DAVID_NICKNAME = "DavidDemo";
     public static final String DEMO_PASSWORD = "demo123";
 
     private static final String PREFERENCES_NAME = "demo_data_setup";
-    private static final String KEY_PREPARED = "prepared_v1";
-    private static final String PENDING_ITEM_NAME = "Java Programming Textbook";
-    private static final String SOLD_ITEM_NAME = "Scientific Calculator";
+    private static final String KEY_PREPARED = "prepared_v2";
+
+    private static final String[] IMAGE_ASSETS = {
+            "java_textbook.png", "scientific_calculator.png", "wireless_keyboard.png",
+            "desk_lamp.png", "office_chair.png", "rice_cooker.png",
+            "monitor_stand.png", "tennis_racket.png"
+    };
 
     private DemoDataSeeder() {
     }
@@ -33,26 +41,49 @@ public final class DemoDataSeeder {
 
         User alice = ensureUser(repository, ALICE_NICKNAME, "91234567");
         User bob = ensureUser(repository, BOB_NICKNAME, "92345678");
-        if (alice == null || bob == null) {
+        User carol = ensureUser(repository, CAROL_NICKNAME, "93456789");
+        User david = ensureUser(repository, DAVID_NICKNAME, "94567890");
+        if (alice == null || bob == null || carol == null || david == null) {
             return false;
         }
-        if (preferences.getBoolean(KEY_PREPARED, false)) {
-            return true;
-        }
+        Map<String, String> images = DemoImageInstaller.install(context, IMAGE_ASSETS);
 
-        long pendingItemId = ensureItem(repository, alice.getId(), PENDING_ITEM_NAME,
-                "Clean COMP7506 Java course textbook.", 12000, AppContract.CATEGORY_BOOKS);
-        if (pendingItemId == AppContract.INVALID_ID
-                || !ensurePendingOffer(repository, pendingItemId, bob.getId(), 10000)) {
-            return false;
-        }
+        long textbook = ensureItem(repository, alice.getId(), "Java Programming Textbook",
+                "Clean COMP7506 Java course textbook with light notes.", 12000,
+                AppContract.CATEGORY_BOOKS, images.get("java_textbook.png"));
+        long calculator = ensureItem(repository, alice.getId(), "Scientific Calculator",
+                "Used scientific calculator in good condition.", 8000,
+                AppContract.CATEGORY_ELECTRONICS, images.get("scientific_calculator.png"));
+        long keyboard = ensureItem(repository, bob.getId(), "Wireless Keyboard",
+                "Compact keyboard, fully working and ideal for a study desk.", 15000,
+                AppContract.CATEGORY_ELECTRONICS, images.get("wireless_keyboard.png"));
+        long lamp = ensureItem(repository, bob.getId(), "Blue Study Desk Lamp",
+                "Adjustable metal lamp with a bright reading light.", 9000,
+                AppContract.CATEGORY_DAILY_GOODS, images.get("desk_lamp.png"));
+        long chair = ensureItem(repository, carol.getId(), "Ergonomic Mesh Chair",
+                "Comfortable adjustable chair for long study sessions.", 32000,
+                AppContract.CATEGORY_FURNITURE, images.get("office_chair.png"));
+        long cooker = ensureItem(repository, carol.getId(), "Compact Rice Cooker",
+                "Clean one-person rice cooker with power cable.", 18000,
+                AppContract.CATEGORY_DAILY_GOODS, images.get("rice_cooker.png"));
+        long stand = ensureItem(repository, david.getId(), "Bamboo Monitor Stand",
+                "Sturdy desktop stand with storage space underneath.", 11000,
+                AppContract.CATEGORY_FURNITURE, images.get("monitor_stand.png"));
+        long racket = ensureItem(repository, david.getId(), "Tennis Racket with Cover",
+                "Beginner-friendly racket with a protective cover.", 14000,
+                AppContract.CATEGORY_OTHERS, images.get("tennis_racket.png"));
 
-        long soldItemId = ensureItem(repository, alice.getId(), SOLD_ITEM_NAME,
-                "Used scientific calculator in good condition.", 8000, AppContract.CATEGORY_ELECTRONICS);
-        if (soldItemId == AppContract.INVALID_ID
-                || !ensureConfirmedDeal(repository, soldItemId, alice.getId(), bob.getId(), 8000)) {
-            return false;
-        }
+        boolean ready = allItemsCreated(textbook, calculator, keyboard, lamp,
+                chair, cooker, stand, racket)
+                && ensurePendingOffer(repository, textbook, bob.getId(), 10000)
+                && ensurePendingOffer(repository, keyboard, alice.getId(), 13000)
+                && ensurePendingOffer(repository, chair, david.getId(), 28000)
+                && ensurePendingOffer(repository, cooker, bob.getId(), 16000)
+                && ensurePendingOffer(repository, lamp, carol.getId(), 7500)
+                && ensurePendingOffer(repository, stand, carol.getId(), 9500)
+                && ensurePendingOffer(repository, racket, alice.getId(), 12000)
+                && ensureConfirmedDeal(repository, calculator, alice.getId(), bob.getId(), 8000);
+        if (!ready) return false;
 
         preferences.edit().putBoolean(KEY_PREPARED, true).apply();
         return true;
@@ -69,14 +100,27 @@ public final class DemoDataSeeder {
     }
 
     private static long ensureItem(MarketRepository repository, long sellerId, String name,
-                                   String description, long priceCents, String category) {
+                                   String description, long priceCents, String category,
+                                   String imageUri) {
         for (ItemCard item : repository.getListingsBySeller(sellerId)) {
             if (name.equals(item.getName())) {
+                Item existing = repository.getItemById(item.getItemId());
+                if (existing != null && imageUri != null
+                        && !imageUri.equals(existing.getImageUri())) {
+                    repository.updateItemImage(existing.getId(), sellerId, imageUri);
+                }
                 return item.getItemId();
             }
         }
         return repository.createItem(sellerId,
-                new ItemDraft(name, description, priceCents, null, category));
+                new ItemDraft(name, description, priceCents, imageUri, category));
+    }
+
+    private static boolean allItemsCreated(long... itemIds) {
+        for (long itemId : itemIds) {
+            if (itemId == AppContract.INVALID_ID) return false;
+        }
+        return true;
     }
 
     private static boolean ensurePendingOffer(MarketRepository repository, long itemId,

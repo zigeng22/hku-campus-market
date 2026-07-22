@@ -82,6 +82,31 @@ public class MarketRepositoryAuthTest {
         assertInvalid(repository.registerUser("Alice", "secret12", "1234"));
     }
 
+    @Test
+    public void userCanUpdateProfileAndPassword() {
+        RegistrationResult alice = repository.registerUser(
+                "Alice", "secret12", "91234567");
+        assertTrue(alice.isSuccess());
+        assertTrue(repository.registerUser(
+                "Bob", "secret12", "92345678").isSuccess());
+
+        assertEquals(RepositoryResultCode.DUPLICATE_NICKNAME,
+                repository.updateUserProfile(alice.getUserId(), "Bob", "93456789"));
+        assertEquals(RepositoryResultCode.OK,
+                repository.updateUserProfile(alice.getUserId(), "AliceNew", "93456789"));
+        User updated = repository.getUserById(alice.getUserId());
+        assertEquals("AliceNew", updated.getNickname());
+        assertEquals("93456789", updated.getWhatsapp());
+
+        assertEquals(RepositoryResultCode.INVALID_CREDENTIALS,
+                repository.changePassword(alice.getUserId(), "wrong12", "newpass12"));
+        assertEquals(RepositoryResultCode.OK,
+                repository.changePassword(alice.getUserId(), "secret12", "newpass12"));
+        assertNull(repository.authenticate("AliceNew", "secret12"));
+        assertEquals(alice.getUserId(),
+                repository.authenticate("AliceNew", "newpass12").getId());
+    }
+
     private void assertInvalid(RegistrationResult result) {
         assertFalse(result.isSuccess());
         assertEquals(RepositoryResultCode.INVALID_INPUT, result.getCode());

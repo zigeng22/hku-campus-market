@@ -55,8 +55,19 @@
             android:text="@string/sample_status"
             android:textAppearance="@style/TextAppearance.HkuMarket.Brand"
             app:layout_constraintBottom_toBottomOf="@id/buttonAcceptOffer"
-            app:layout_constraintEnd_toStartOf="@id/buttonAcceptOffer"
+            app:layout_constraintEnd_toStartOf="@id/buttonRejectOffer"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/buttonAcceptOffer" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonRejectOffer"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_small"
+            android:text="@string/action_reject_offer"
+            app:layout_constraintBottom_toBottomOf="@id/buttonAcceptOffer"
+            app:layout_constraintEnd_toStartOf="@id/buttonAcceptOffer"
             app:layout_constraintTop_toTopOf="@id/buttonAcceptOffer" />
 
         <com.google.android.material.button.MaterialButton

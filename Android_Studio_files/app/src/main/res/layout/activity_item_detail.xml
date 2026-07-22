@@ -108,6 +108,33 @@
                     app:drawableStartCompat="@drawable/ic_person_24"
                     app:drawableTint="@color/brand_primary" />
 
+                <LinearLayout
+                    android:id="@+id/groupBuyerContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_medium"
+                    android:background="@drawable/bg_status_notice"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_compact"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/textSoldBuyerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sample_buyer"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                    <TextView
+                        android:id="@+id/textSoldBuyerWhatsapp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_extra_small"
+                        android:text="@string/sample_whatsapp"
+                        android:textAppearance="@style/TextAppearance.HkuMarket.Metadata" />
+                </LinearLayout>
+
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

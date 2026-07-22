@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._7506_project">
         <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ui.management.OfferReviewActivity"
             android:exported="false" />
         <activity

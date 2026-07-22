@@ -28,6 +28,7 @@ public class ManagementActivity extends AppCompatActivity {
     private long currentUserId;
     private RecyclerView recycler;
     private TextView textEmpty;
+    private TabLayout tabLayout;
 
     private ListingAdapter listingAdapter;
     private ParticipationAdapter participationAdapter;
@@ -54,7 +55,7 @@ public class ManagementActivity extends AppCompatActivity {
         listingAdapter.setOnListingClickListener(this::openItemDetail);
         participationAdapter = new ParticipationAdapter();
 
-        TabLayout tabLayout = findViewById(R.id.tabManagement);
+        tabLayout = findViewById(R.id.tabManagement);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -81,8 +82,9 @@ public class ManagementActivity extends AppCompatActivity {
     }
 
     private void loadTabContent() {
+        List<ItemCard> listings = repo.getListingsBySeller(currentUserId);
+        updatePendingOfferBadge(listings);
         if (currentTab == 0) {
-            List<ItemCard> listings = repo.getListingsBySeller(currentUserId);
             recycler.setAdapter(listingAdapter);
             listingAdapter.setItems(listings);
             textEmpty.setText(R.string.empty_my_listings);
@@ -93,6 +95,20 @@ public class ManagementActivity extends AppCompatActivity {
             participationAdapter.setItems(activities);
             textEmpty.setText(R.string.empty_my_activity);
             textEmpty.setVisibility(activities.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void updatePendingOfferBadge(List<ItemCard> listings) {
+        int pendingOffers = 0;
+        for (ItemCard listing : listings) {
+            pendingOffers += listing.getOfferCount();
+        }
+        TabLayout.Tab listingsTab = tabLayout.getTabAt(0);
+        if (listingsTab == null) return;
+        if (pendingOffers > 0) {
+            listingsTab.getOrCreateBadge().setNumber(pendingOffers);
+        } else {
+            listingsTab.removeBadge();
         }
     }
 

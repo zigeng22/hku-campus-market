@@ -17,6 +17,7 @@ import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.model.Item;
 import com.example.a7506_project.model.OfferSummary;
 import com.example.a7506_project.model.result.AcceptOfferResult;
+import com.example.a7506_project.model.result.RepositoryResultCode;
 import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -57,6 +58,7 @@ public class OfferReviewActivity extends AppCompatActivity {
         recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new OfferAdapter();
         adapter.setOnAcceptListener(this::onAcceptOffer);
+        adapter.setOnRejectListener(this::onRejectOffer);
         recycler.setAdapter(adapter);
     }
 
@@ -100,6 +102,27 @@ public class OfferReviewActivity extends AppCompatActivity {
                                 message = R.string.accept_error_generic;
                                 break;
                         }
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.action_close, null)
+                .show();
+    }
+
+    private void onRejectOffer(OfferSummary offer) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.reject_offer_title)
+                .setMessage(getString(R.string.reject_offer_message, offer.getBuyerNickname()))
+                .setPositiveButton(R.string.action_reject_offer, (dialog, which) -> {
+                    RepositoryResultCode result = repo.rejectOffer(
+                            offer.getOfferId(), currentUserId);
+                    if (result == RepositoryResultCode.OK) {
+                        Toast.makeText(this, R.string.offer_rejected, Toast.LENGTH_SHORT).show();
+                        loadOffers();
+                    } else {
+                        int message = result == RepositoryResultCode.OFFER_NOT_PENDING
+                                ? R.string.accept_error_not_pending
+                                : R.string.reject_error_generic;
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                     }
                 })
