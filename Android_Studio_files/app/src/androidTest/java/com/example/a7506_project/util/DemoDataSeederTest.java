@@ -49,6 +49,15 @@ public class DemoDataSeederTest {
         assertDemoAccount(repository, bob);
         assertDemoAccount(repository, carol);
         assertDemoAccount(repository, david);
+        int totalListings = repository.getListingsBySeller(alice.getId()).size()
+                + repository.getListingsBySeller(bob.getId()).size()
+                + repository.getListingsBySeller(carol.getId()).size()
+                + repository.getListingsBySeller(david.getId()).size();
+        assertTrue(totalListings >= 14);
+        assertTrue(repository.getListingsBySeller(alice.getId()).size() >= 4);
+        assertTrue(repository.getListingsBySeller(bob.getId()).size() >= 4);
+        assertTrue(repository.getListingsBySeller(carol.getId()).size() >= 3);
+        assertTrue(repository.getListingsBySeller(david.getId()).size() >= 3);
 
         List<ParticipationSummary> bobActivity = repository.getBuyerActivity(bob.getId());
         assertTrue(bobActivity.stream().anyMatch(

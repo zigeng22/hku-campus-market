@@ -59,10 +59,10 @@ Click the button once to create:
 
 Prepared records include:
 
-- Two listings owned by every account, covering books, electronics, furniture, daily goods, and sports
+- Three or four listings owned by every account, covering books, electronics, furniture, daily goods, and sports
 - Pending offers made by every account on other users' listings
 - A sold scientific calculator with a confirmed Alice/Bob deal
-- Eight product photos copied to `Pictures/HKU Campus Market` in the Android 10+ emulator gallery
+- Fourteen product photos copied to `Pictures/HKU Campus Market` in the Android 10+ emulator gallery
 
 The login form is filled with Alice after preparation. The action is reusable and does not wipe normal user records.
 
@@ -98,6 +98,7 @@ Android_Studio_files/app/src/main/
 project_docs/
   7506_MASTER_DEVELOPMENT_PLAN.md
   7506_ENHANCEMENT_DEVELOPMENT_LOG.md
+  7506_PROJECT_STRUCTURE_AND_TESTING_GUIDE.md
 ```
 
 Activities never execute SQL directly. They call `MarketRepository`, and mutable pages reload data in `onResume()`.
@@ -120,8 +121,8 @@ cd Android_Studio_files
 - WhatsApp is displayed as contact information; the app does not send messages
 - Image availability depends on the persisted document URI
 
-The authoritative requirements, frozen contracts, testing matrix, and team workflow are in [`project_docs/7506_MASTER_DEVELOPMENT_PLAN.md`](project_docs/7506_MASTER_DEVELOPMENT_PLAN.md). Post-P0 improvements are tracked in [`project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md`](project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md).
+The authoritative requirements, frozen contracts, testing matrix, and team workflow are in [`project_docs/7506_MASTER_DEVELOPMENT_PLAN.md`](project_docs/7506_MASTER_DEVELOPMENT_PLAN.md). Post-P0 improvements are tracked in [`project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md`](project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md). The Chinese file-by-file architecture and teammate test guide is [`project_docs/7506_PROJECT_STRUCTURE_AND_TESTING_GUIDE.md`](project_docs/7506_PROJECT_STRUCTURE_AND_TESTING_GUIDE.md).
 
 ## Dependencies And Assets
 
-The project uses AndroidX, Google Material Components, JUnit, and Espresso through their official Maven packages. No third-party marketplace source project was copied into the implementation. The eight demo product photos under `app/src/main/assets/demo_products` were generated for this project with OpenAI image generation; their subjects and usage are recorded in the enhancement log.
+The project uses AndroidX, Google Material Components, JUnit, and Espresso through their official Maven packages. No third-party marketplace source project was copied into the implementation. The fourteen demo product photos under `app/src/main/assets/demo_products` were generated for this project with OpenAI image generation; their subjects and usage are recorded in the enhancement log.
