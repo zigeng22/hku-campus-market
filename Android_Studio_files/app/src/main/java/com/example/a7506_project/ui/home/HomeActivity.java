@@ -22,6 +22,7 @@ import com.example.a7506_project.ui.auth.LoginActivity;
 import com.example.a7506_project.ui.item.ItemDetailActivity;
 import com.example.a7506_project.ui.item.PostEditItemActivity;
 import com.example.a7506_project.ui.management.ManagementActivity;
+import com.example.a7506_project.ui.profile.ProfileActivity;
 import com.example.a7506_project.util.SessionManager;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -35,6 +36,9 @@ public class HomeActivity extends AppCompatActivity {
     private ItemAdapter adapter;
     private TextInputEditText searchInput;
     private TextView textEmpty;
+    private MaterialToolbar toolbar;
+    private View offerNotification;
+    private View fabManagement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         repo = RepositoryProvider.get(this);
         session = new SessionManager(this);
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbarHome);
-        User user = repo.getUserById(session.getCurrentUserId());
-        if (user != null) {
-            toolbar.setTitle(user.getNickname());
-        }
+        toolbar = findViewById(R.id.toolbarHome);
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.action_logout) {
                 session.logout();
@@ -88,14 +88,21 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.buttonClearSearch).setOnClickListener(view -> searchInput.setText(""));
         findViewById(R.id.fabPostItem).setOnClickListener(view ->
                 startActivity(new Intent(this, PostEditItemActivity.class)));
-        findViewById(R.id.fabManagement).setOnClickListener(view ->
+        fabManagement = findViewById(R.id.fabManagement);
+        offerNotification = findViewById(R.id.viewOfferNotification);
+        fabManagement.setOnClickListener(view ->
                 startActivity(new Intent(this, ManagementActivity.class)));
+        findViewById(R.id.fabProfile).setOnClickListener(view ->
+                startActivity(new Intent(this, ProfileActivity.class)));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        User user = repo.getUserById(session.getCurrentUserId());
+        if (user != null) toolbar.setTitle(user.getNickname());
         loadItems();
+        loadPendingOfferIndicator();
     }
 
     private void loadItems() {
@@ -109,5 +116,17 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ItemDetailActivity.class);
         intent.putExtra(AppContract.EXTRA_ITEM_ID, item.getItemId());
         startActivity(intent);
+    }
+
+    private void loadPendingOfferIndicator() {
+        int pendingOffers = 0;
+        for (ItemCard listing : repo.getListingsBySeller(session.getCurrentUserId())) {
+            pendingOffers += listing.getOfferCount();
+        }
+        offerNotification.setVisibility(pendingOffers > 0 ? View.VISIBLE : View.GONE);
+        fabManagement.setContentDescription(pendingOffers > 0
+                ? getResources().getQuantityString(
+                        R.plurals.pending_offer_alert, pendingOffers, pendingOffers)
+                : getString(R.string.open_management_description));
     }
 }

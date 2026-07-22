@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.os.Build;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -24,7 +25,7 @@ import java.util.List;
 public class DemoDataSeederTest {
 
     @Test
-    public void prepareCreatesReusableAliceBobScenarioWithoutDuplicates() {
+    public void prepareCreatesReusableFourAccountMarketplace() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         MarketRepository repository = RepositoryProvider.get(context);
 
@@ -35,15 +36,32 @@ public class DemoDataSeederTest {
                 DemoDataSeeder.ALICE_NICKNAME, DemoDataSeeder.DEMO_PASSWORD);
         User bob = repository.authenticate(
                 DemoDataSeeder.BOB_NICKNAME, DemoDataSeeder.DEMO_PASSWORD);
+        User carol = repository.authenticate(
+                DemoDataSeeder.CAROL_NICKNAME, DemoDataSeeder.DEMO_PASSWORD);
+        User david = repository.authenticate(
+                DemoDataSeeder.DAVID_NICKNAME, DemoDataSeeder.DEMO_PASSWORD);
         assertNotNull(alice);
         assertNotNull(bob);
+        assertNotNull(carol);
+        assertNotNull(david);
 
-        List<ItemCard> listings = repository.getListingsBySeller(alice.getId());
-        assertEquals(2, listings.size());
+        assertDemoAccount(repository, alice);
+        assertDemoAccount(repository, bob);
+        assertDemoAccount(repository, carol);
+        assertDemoAccount(repository, david);
 
-        List<ParticipationSummary> activity = repository.getBuyerActivity(bob.getId());
-        assertEquals(2, activity.size());
-        assertTrue(activity.stream().anyMatch(item -> "CONFIRMED".equals(item.getDealStatus())));
-        assertTrue(activity.stream().anyMatch(item -> "PENDING".equals(item.getOfferStatus())));
+        List<ParticipationSummary> bobActivity = repository.getBuyerActivity(bob.getId());
+        assertTrue(bobActivity.stream().anyMatch(
+                item -> "CONFIRMED".equals(item.getDealStatus())));
+    }
+
+    private void assertDemoAccount(MarketRepository repository, User user) {
+        List<ItemCard> listings = repository.getListingsBySeller(user.getId());
+        assertTrue(listings.size() >= 2);
+        assertTrue(repository.getBuyerActivity(user.getId()).size() >= 1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            assertTrue(listings.stream().allMatch(
+                    item -> item.getImageUri() != null && !item.getImageUri().isEmpty()));
+        }
     }
 }

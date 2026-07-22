@@ -122,6 +122,24 @@ public class MarketRepositoryOfferRulesTest {
                 repository.placeOffer(itemId, buyerId, 10000, AppContract.OFFER_TYPE_NEGOTIATED));
     }
 
+    @Test
+    public void sellerCanRejectPendingOfferAndBuyerCanOfferAgain() {
+        long itemId = createActiveItem(12345);
+        PlaceOfferResult first = repository.placeOffer(
+                itemId, buyerId, 10000, AppContract.OFFER_TYPE_NEGOTIATED);
+        assertTrue(first.isSuccess());
+
+        assertEquals(RepositoryResultCode.NOT_OWNER,
+                repository.rejectOffer(first.getOfferId(), buyerId));
+        assertEquals(RepositoryResultCode.OK,
+                repository.rejectOffer(first.getOfferId(), sellerId));
+        assertEquals(AppContract.OFFER_REJECTED, onlyOfferFor(itemId).getStatus());
+        assertEquals(RepositoryResultCode.OFFER_NOT_PENDING,
+                repository.rejectOffer(first.getOfferId(), sellerId));
+        assertTrue(repository.placeOffer(
+                itemId, buyerId, 10500, AppContract.OFFER_TYPE_NEGOTIATED).isSuccess());
+    }
+
     private long register(String nickname, String whatsapp) {
         RegistrationResult result = repository.registerUser(nickname, "secret12", whatsapp);
         assertTrue(result.isSuccess());

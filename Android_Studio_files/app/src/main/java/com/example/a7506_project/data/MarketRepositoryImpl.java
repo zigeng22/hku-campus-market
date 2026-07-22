@@ -119,6 +119,68 @@ public class MarketRepositoryImpl implements MarketRepository {
         return user;
     }
 
+    @Override
+    public RepositoryResultCode updateUserProfile(long userId, String nickname, String whatsapp) {
+        if (Validators.validateNickname(nickname) != null
+                || Validators.validateWhatsapp(whatsapp) != null) {
+            return RepositoryResultCode.INVALID_INPUT;
+        }
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor duplicate = db.rawQuery(
+                "SELECT COUNT(*) FROM " + Users.TABLE
+                        + " WHERE " + Users.NICKNAME + " = ? COLLATE NOCASE"
+                        + " AND " + Users._ID + " != ?",
+                new String[]{nickname.trim(), String.valueOf(userId)});
+        duplicate.moveToFirst();
+        boolean nicknameTaken = duplicate.getInt(0) > 0;
+        duplicate.close();
+        if (nicknameTaken) {
+            return RepositoryResultCode.DUPLICATE_NICKNAME;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(Users.NICKNAME, nickname.trim());
+        values.put(Users.WHATSAPP, whatsapp.trim());
+        int rows = db.update(Users.TABLE, values,
+                Users._ID + " = ?", new String[]{String.valueOf(userId)});
+        return rows > 0 ? RepositoryResultCode.OK : RepositoryResultCode.INVALID_CREDENTIALS;
+    }
+
+    @Override
+    public RepositoryResultCode changePassword(long userId, String currentPassword, String newPassword) {
+        if (currentPassword == null || Validators.validatePassword(newPassword) != null) {
+            return RepositoryResultCode.INVALID_INPUT;
+        }
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(Users.TABLE, null,
+                Users._ID + " = ?", new String[]{String.valueOf(userId)},
+                null, null, null);
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return RepositoryResultCode.INVALID_CREDENTIALS;
+        }
+
+        byte[] storedHash = PasswordHasher.hexToBytes(
+                cursor.getString(cursor.getColumnIndexOrThrow(Users.PASSWORD_HASH)));
+        byte[] storedSalt = PasswordHasher.hexToBytes(
+                cursor.getString(cursor.getColumnIndexOrThrow(Users.PASSWORD_SALT)));
+        cursor.close();
+        if (!PasswordHasher.verify(currentPassword, storedSalt, storedHash)) {
+            return RepositoryResultCode.INVALID_CREDENTIALS;
+        }
+
+        byte[] newSalt = PasswordHasher.generateSalt();
+        ContentValues values = new ContentValues();
+        values.put(Users.PASSWORD_SALT, PasswordHasher.bytesToHex(newSalt));
+        values.put(Users.PASSWORD_HASH,
+                PasswordHasher.bytesToHex(PasswordHasher.hash(newPassword, newSalt)));
+        int rows = db.update(Users.TABLE, values,
+                Users._ID + " = ?", new String[]{String.valueOf(userId)});
+        return rows > 0 ? RepositoryResultCode.OK : RepositoryResultCode.DATABASE_ERROR;
+    }
+
     // ── Items ──────────────────────────────────────────────────────────────
 
     @Override
@@ -167,6 +229,21 @@ public class MarketRepositoryImpl implements MarketRepository {
     }
 
     @Override
+    public boolean updateItemImage(long itemId, long sellerId, String imageUri) {
+        if (imageUri == null || imageUri.trim().isEmpty()) {
+            return false;
+        }
+        ContentValues values = new ContentValues();
+        values.put(Items.IMAGE_URI, imageUri);
+        int rows = dbHelper.getWritableDatabase().update(Items.TABLE, values,
+                Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND "
+                        + Items.STATUS + " != ?",
+                new String[]{String.valueOf(itemId), String.valueOf(sellerId),
+                        AppContract.ITEM_DELETED});
+        return rows > 0;
+    }
+
+    @Override
     public boolean softDeleteItem(long itemId, long sellerId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
@@ -175,8 +252,10 @@ public class MarketRepositoryImpl implements MarketRepository {
             values.put(Items.STATUS, AppContract.ITEM_DELETED);
 
             int rows = db.update(Items.TABLE, values,
-                    Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND " + Items.STATUS + " = ?",
-                    new String[]{String.valueOf(itemId), String.valueOf(sellerId), AppContract.ITEM_ACTIVE});
+                    Items._ID + " = ? AND " + Items.SELLER_ID + " = ? AND "
+                            + Items.STATUS + " IN (?, ?)",
+                    new String[]{String.valueOf(itemId), String.valueOf(sellerId),
+                            AppContract.ITEM_ACTIVE, AppContract.ITEM_SOLD});
             if (rows == 0) {
                 return false;
             }
@@ -280,10 +359,11 @@ public class MarketRepositoryImpl implements MarketRepository {
                 + " AND o." + Offers.STATUS + " = '" + AppContract.OFFER_PENDING + "') AS offer_count"
                 + " FROM " + Items.TABLE + " i"
                 + " JOIN " + Users.TABLE + " u ON i." + Items.SELLER_ID + " = u." + Users._ID
-                + " WHERE i." + Items.SELLER_ID + " = ?"
+                + " WHERE i." + Items.SELLER_ID + " = ? AND i." + Items.STATUS + " != ?"
                 + " ORDER BY i." + Items.CREATED_AT + " DESC, i." + Items._ID + " DESC";
 
-        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(sellerId)});
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(sellerId),
+                AppContract.ITEM_DELETED});
         List<ItemCard> result = new ArrayList<>();
         while (cursor.moveToNext()) {
             result.add(new ItemCard(
@@ -381,6 +461,37 @@ public class MarketRepositoryImpl implements MarketRepository {
         }
         cursor.close();
         return result;
+    }
+
+    @Override
+    public RepositoryResultCode rejectOffer(long offerId, long sellerId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(Offers.TABLE,
+                new String[]{Offers.ITEM_ID, Offers.STATUS},
+                Offers._ID + " = ?", new String[]{String.valueOf(offerId)},
+                null, null, null);
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return RepositoryResultCode.OFFER_NOT_FOUND;
+        }
+        long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(Offers.ITEM_ID));
+        String status = cursor.getString(cursor.getColumnIndexOrThrow(Offers.STATUS));
+        cursor.close();
+        if (!AppContract.OFFER_PENDING.equals(status)) {
+            return RepositoryResultCode.OFFER_NOT_PENDING;
+        }
+
+        Item item = getItemById(itemId);
+        if (item == null || item.getSellerId() != sellerId) {
+            return RepositoryResultCode.NOT_OWNER;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(Offers.STATUS, AppContract.OFFER_REJECTED);
+        int rows = db.update(Offers.TABLE, values,
+                Offers._ID + " = ? AND " + Offers.STATUS + " = ?",
+                new String[]{String.valueOf(offerId), AppContract.OFFER_PENDING});
+        return rows > 0 ? RepositoryResultCode.OK : RepositoryResultCode.OFFER_NOT_PENDING;
     }
 
     @Override

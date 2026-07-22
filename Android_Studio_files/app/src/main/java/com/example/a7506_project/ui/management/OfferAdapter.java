@@ -24,13 +24,22 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
 
     private final List<OfferSummary> offers = new ArrayList<>();
     private OnAcceptListener listener;
+    private OnRejectListener rejectListener;
 
     public interface OnAcceptListener {
         void onAccept(OfferSummary offer);
     }
 
+    public interface OnRejectListener {
+        void onReject(OfferSummary offer);
+    }
+
     public void setOnAcceptListener(OnAcceptListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnRejectListener(OnRejectListener listener) {
+        this.rejectListener = listener;
     }
 
     public void setOffers(List<OfferSummary> newOffers) {
@@ -53,7 +62,8 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
         holder.buyerName.setText(holder.itemView.getContext().getString(
                 R.string.offer_from_buyer, offer.getBuyerNickname()));
         holder.amount.setText(MoneyFormatter.centsToHkd(offer.getAmountCents()));
-        String date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(offer.getCreatedAt()));
+        String date = DateFormat.getDateInstance(DateFormat.MEDIUM)
+                .format(new Date(offer.getCreatedAt() * 1000L));
         holder.type.setText(holder.itemView.getContext().getString(
                 R.string.offer_metadata,
                 TradeDisplayFormatter.offerTypeLabel(holder.itemView.getContext(), offer.getType()),
@@ -64,8 +74,12 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
 
         boolean isPending = AppContract.OFFER_PENDING.equals(offer.getStatus());
         holder.acceptButton.setVisibility(isPending ? View.VISIBLE : View.GONE);
+        holder.rejectButton.setVisibility(isPending ? View.VISIBLE : View.GONE);
         holder.acceptButton.setOnClickListener(v -> {
             if (listener != null) listener.onAccept(offer);
+        });
+        holder.rejectButton.setOnClickListener(v -> {
+            if (rejectListener != null) rejectListener.onReject(offer);
         });
     }
 
@@ -76,7 +90,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView buyerName, amount, type, status;
-        View acceptButton;
+        View acceptButton, rejectButton;
 
         ViewHolder(View view) {
             super(view);
@@ -85,6 +99,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
             type = view.findViewById(R.id.textOfferType);
             status = view.findViewById(R.id.textOfferStatus);
             acceptButton = view.findViewById(R.id.buttonAcceptOffer);
+            rejectButton = view.findViewById(R.id.buttonRejectOffer);
         }
     }
 }

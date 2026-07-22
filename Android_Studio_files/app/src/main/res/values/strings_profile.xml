@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="open_profile_description">Open account settings</string>
+    <string name="profile_title">Account settings</string>
+    <string name="profile_basic_info">Basic information</string>
+    <string name="save_profile">Save profile</string>
+    <string name="profile_saved">Profile updated.</string>
+    <string name="profile_save_failed">Could not update profile.</string>
+    <string name="change_password_title">Change password</string>
+    <string name="current_password_hint">Current password</string>
+    <string name="new_password_hint">New password</string>
+    <string name="confirm_new_password_hint">Confirm new password</string>
+    <string name="change_password_action">Change password</string>
+    <string name="current_password_incorrect">Current password is incorrect</string>
+    <string name="password_changed">Password changed.</string>
+    <string name="password_change_failed">Could not change password.</string>
+    <plurals name="pending_offer_alert">
+        <item quantity="one">Open management center, %d pending offer</item>
+        <item quantity="other">Open management center, %d pending offers</item>
+    </plurals>
+</resources>

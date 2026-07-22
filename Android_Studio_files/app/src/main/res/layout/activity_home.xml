@@ -121,18 +121,34 @@
         app:layout_constraintTop_toBottomOf="@id/textListingsHeading"
         tools:visibility="gone" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabManagement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_compact"
-        android:layout_marginBottom="@dimen/space_medium"
-        android:contentDescription="@string/open_management_description"
-        android:src="@drawable/ic_dashboard_24"
-        app:backgroundTint="@color/brand_sky"
-        app:tint="@color/on_sky"
+    <FrameLayout
+        android:id="@+id/frameManagement"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="@dimen/space_extra_small"
+        android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/fabPostItem" />
+        app:layout_constraintEnd_toStartOf="@id/fabPostItem">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabManagement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:contentDescription="@string/open_management_description"
+            android:src="@drawable/ic_dashboard_24"
+            app:backgroundTint="@color/brand_sky"
+            app:tint="@color/on_sky" />
+
+        <View
+            android:id="@+id/viewOfferNotification"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/bg_notification_dot"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPostItem"
@@ -144,6 +160,19 @@
         android:src="@drawable/ic_add_24"
         app:backgroundTint="@color/brand_primary"
         app:tint="@color/on_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fabProfile" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_medium"
+        android:layout_marginBottom="@dimen/space_medium"
+        android:contentDescription="@string/open_profile_description"
+        android:src="@drawable/ic_person_24"
+        app:backgroundTint="@color/surface"
+        app:tint="@color/brand_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

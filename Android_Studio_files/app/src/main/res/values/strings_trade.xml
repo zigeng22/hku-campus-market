@@ -26,6 +26,7 @@
     <string name="sample_buyer">Buyer</string>
     <string name="sample_offer_type">Offer type</string>
     <string name="action_accept_offer">Accept</string>
+    <string name="action_reject_offer">Reject</string>
     <string name="sample_activity_item">Item</string>
     <string name="sample_whatsapp">WhatsApp available after confirmation</string>
     <string name="counterparty_whatsapp">WhatsApp: %1$s</string>
@@ -48,6 +49,11 @@
     <string name="accept_offer_title">Accept offer?</string>
     <string name="accept_offer_message">Accept %1$s\'s offer? This item will be marked as sold.</string>
     <string name="offer_accepted">Offer accepted. Deal confirmed.</string>
+    <string name="reject_offer_title">Reject offer?</string>
+    <string name="reject_offer_message">Reject %1$s\'s offer?</string>
+    <string name="offer_rejected">Offer rejected.</string>
+    <string name="reject_error_generic">Could not reject this offer</string>
+    <string name="sold_to_buyer">Buyer: %1$s</string>
     <string name="accept_error_not_found">Offer not found</string>
     <string name="accept_error_not_pending">This offer is no longer pending</string>
     <string name="accept_error_generic">Could not accept this offer</string>

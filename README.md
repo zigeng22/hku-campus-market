@@ -10,7 +10,8 @@ HKU Campus Market is a local Android marketplace prototype for the COMP7506D gro
 - Seller offer review and atomic deal confirmation
 - My Listings and My Activity views
 - Counterparty WhatsApp revealed only after a confirmed deal
-- Debug-only reusable Alice/Bob demo scenario
+- Debug-only reusable four-account marketplace scenario with product photos
+- Pending-offer badges, offer rejection, sold-item buyer contact, and account settings
 
 ## Technology
 
@@ -51,16 +52,19 @@ Click the button once to create:
 
 | Account | Password | Role |
 |---|---|---|
-| `AliceDemo` | `demo123` | Seller |
-| `BobDemo` | `demo123` | Buyer |
+| `AliceDemo` | `demo123` | Seller and buyer |
+| `BobDemo` | `demo123` | Seller and buyer |
+| `CarolDemo` | `demo123` | Seller and buyer |
+| `DavidDemo` | `demo123` | Seller and buyer |
 
 Prepared records include:
 
-- An active Java textbook with Bob's HK$100 Pending offer
+- Two listings owned by every account, covering books, electronics, furniture, daily goods, and sports
+- Pending offers made by every account on other users' listings
 - A sold scientific calculator with a confirmed Alice/Bob deal
-- Bob's My Activity showing both Pending and Deal confirmed states
+- Eight product photos copied to `Pictures/HKU Campus Market` in the Android 10+ emulator gallery
 
-The login form is filled with Alice after preparation. To rebuild the original scenario, clear the App Data and press **Prepare demo data** again.
+The login form is filled with Alice after preparation. The action is reusable and does not wipe normal user records.
 
 ## Local Data
 
@@ -70,7 +74,7 @@ All business data is stored only on the current device in the app-private SQLite
 databases/hku_campus_market.db
 ```
 
-It contains `users`, `items`, `offers`, and `trade_transactions`. Passwords are stored as salted PBKDF2 hashes. Selected images remain in their document provider; SQLite stores only their persistent URI.
+It contains `users`, `items`, `offers`, and `trade_transactions`. Passwords are stored as salted PBKDF2 hashes. Selected images remain in their document provider; SQLite stores only their persistent URI. Demo images are inserted into the emulator MediaStore and their content URIs are stored in the same way.
 
 The current `userId` is stored separately in:
 
@@ -93,6 +97,7 @@ Android_Studio_files/app/src/main/
   res/              XML layouts, drawables, menus, themes, and strings
 project_docs/
   7506_MASTER_DEVELOPMENT_PLAN.md
+  7506_ENHANCEMENT_DEVELOPMENT_LOG.md
 ```
 
 Activities never execute SQL directly. They call `MarketRepository`, and mutable pages reload data in `onResume()`.
@@ -115,8 +120,8 @@ cd Android_Studio_files
 - WhatsApp is displayed as contact information; the app does not send messages
 - Image availability depends on the persisted document URI
 
-The authoritative requirements, task status, frozen contracts, testing matrix, and team workflow are in [`project_docs/7506_MASTER_DEVELOPMENT_PLAN.md`](project_docs/7506_MASTER_DEVELOPMENT_PLAN.md).
+The authoritative requirements, frozen contracts, testing matrix, and team workflow are in [`project_docs/7506_MASTER_DEVELOPMENT_PLAN.md`](project_docs/7506_MASTER_DEVELOPMENT_PLAN.md). Post-P0 improvements are tracked in [`project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md`](project_docs/7506_ENHANCEMENT_DEVELOPMENT_LOG.md).
 
 ## Dependencies And Assets
 
-The project uses AndroidX, Google Material Components, JUnit, and Espresso through their official Maven packages. No third-party marketplace source project was copied into the implementation. Project-specific UI layouts and visual assets are maintained in this repository.
+The project uses AndroidX, Google Material Components, JUnit, and Espresso through their official Maven packages. No third-party marketplace source project was copied into the implementation. The eight demo product photos under `app/src/main/assets/demo_products` were generated for this project with OpenAI image generation; their subjects and usage are recorded in the enhancement log.

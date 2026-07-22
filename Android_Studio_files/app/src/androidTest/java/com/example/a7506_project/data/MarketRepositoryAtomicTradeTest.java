@@ -112,6 +112,19 @@ public class MarketRepositoryAtomicTradeTest {
     }
 
     @Test
+    public void sellerCanSoftDeleteSoldListingWithoutRemovingTransaction() {
+        long itemId = createItem();
+        PlaceOfferResult offer = placeOffer(itemId, firstBuyerId, 11000);
+        assertTrue(repository.acceptOffer(offer.getOfferId(), sellerId).isSuccess());
+
+        assertTrue(repository.softDeleteItem(itemId, sellerId));
+
+        assertEquals(AppContract.ITEM_DELETED, repository.getItemById(itemId).getStatus());
+        assertTrue(repository.getListingsBySeller(sellerId).isEmpty());
+        assertEquals(firstBuyerId, repository.getTransactionForItem(itemId).getBuyerId());
+    }
+
+    @Test
     public void transactionInsertFailureRollsBackOffersAndItem() {
         long itemId = createItem();
         PlaceOfferResult firstOffer = placeOffer(itemId, firstBuyerId, 11000);

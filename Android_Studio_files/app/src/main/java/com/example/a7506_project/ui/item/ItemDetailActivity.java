@@ -16,6 +16,7 @@ import com.example.a7506_project.contract.AppContract;
 import com.example.a7506_project.data.MarketRepository;
 import com.example.a7506_project.data.RepositoryProvider;
 import com.example.a7506_project.model.Item;
+import com.example.a7506_project.model.TradeTransaction;
 import com.example.a7506_project.model.User;
 import com.example.a7506_project.model.result.PlaceOfferResult;
 import com.example.a7506_project.ui.management.OfferReviewActivity;
@@ -36,8 +37,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private ImageView imageItem;
     private TextView textItemName, textItemPrice, textItemCategory, textItemDescription, textSellerName,
-            textItemStatus;
-    private View groupBuyerActions, groupSellerActions, footerItemActions;
+            textItemStatus, textSoldBuyerName, textSoldBuyerWhatsapp;
+    private View groupBuyerActions, groupSellerActions, groupBuyerContact, footerItemActions,
+            buttonEditItem, buttonDeleteItem, buttonViewOffers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +62,21 @@ public class ItemDetailActivity extends AppCompatActivity {
         textItemDescription = findViewById(R.id.textItemDescription);
         textSellerName = findViewById(R.id.textSellerName);
         textItemStatus = findViewById(R.id.textItemStatus);
+        textSoldBuyerName = findViewById(R.id.textSoldBuyerName);
+        textSoldBuyerWhatsapp = findViewById(R.id.textSoldBuyerWhatsapp);
         groupBuyerActions = findViewById(R.id.groupBuyerActions);
         groupSellerActions = findViewById(R.id.groupSellerActions);
+        groupBuyerContact = findViewById(R.id.groupBuyerContact);
         footerItemActions = findViewById(R.id.footerItemActions);
+        buttonEditItem = findViewById(R.id.buttonEditItem);
+        buttonDeleteItem = findViewById(R.id.buttonDeleteItem);
+        buttonViewOffers = findViewById(R.id.buttonViewOffers);
 
         findViewById(R.id.buttonMakeOffer).setOnClickListener(v -> showOfferDialog(AppContract.OFFER_TYPE_NEGOTIATED));
         findViewById(R.id.buttonBuyNow).setOnClickListener(v -> showOfferDialog(AppContract.OFFER_TYPE_BUY_NOW));
-        findViewById(R.id.buttonEditItem).setOnClickListener(v -> openEditItem());
-        findViewById(R.id.buttonDeleteItem).setOnClickListener(v -> deleteItem());
-        findViewById(R.id.buttonViewOffers).setOnClickListener(v -> openOffers());
+        buttonEditItem.setOnClickListener(v -> openEditItem());
+        buttonDeleteItem.setOnClickListener(v -> deleteItem());
+        buttonViewOffers.setOnClickListener(v -> openOffers());
     }
 
     @Override
@@ -101,18 +109,43 @@ public class ItemDetailActivity extends AppCompatActivity {
                 this, imageItem, item.getImageUri(), R.drawable.ic_item_placeholder);
 
         boolean active = AppContract.ITEM_ACTIVE.equals(item.getStatus());
+        boolean sold = AppContract.ITEM_SOLD.equals(item.getStatus());
+        boolean isSeller = item.getSellerId() == currentUserId;
         textItemStatus.setVisibility(active ? View.GONE : View.VISIBLE);
-        footerItemActions.setVisibility(active ? View.VISIBLE : View.GONE);
+        footerItemActions.setVisibility(active || (sold && isSeller) ? View.VISIBLE : View.GONE);
+        groupBuyerContact.setVisibility(View.GONE);
 
-        if (!active) {
-            groupBuyerActions.setVisibility(View.GONE);
-            groupSellerActions.setVisibility(View.GONE);
-        } else if (item.getSellerId() == currentUserId) {
+        if (sold) {
+            TradeTransaction transaction = repo.getTransactionForItem(itemId);
+            if (transaction != null
+                    && (isSeller || transaction.getBuyerId() == currentUserId)) {
+                User buyer = repo.getUserById(transaction.getBuyerId());
+                if (buyer != null) {
+                    textSoldBuyerName.setText(getString(
+                            R.string.sold_to_buyer, buyer.getNickname()));
+                    textSoldBuyerWhatsapp.setText(getString(
+                            R.string.counterparty_whatsapp, buyer.getWhatsapp()));
+                    groupBuyerContact.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        if (active && isSeller) {
             groupBuyerActions.setVisibility(View.GONE);
             groupSellerActions.setVisibility(View.VISIBLE);
-        } else {
+            buttonEditItem.setVisibility(View.VISIBLE);
+            buttonViewOffers.setVisibility(View.VISIBLE);
+        } else if (active) {
             groupSellerActions.setVisibility(View.GONE);
             groupBuyerActions.setVisibility(View.VISIBLE);
+        } else if (sold && isSeller) {
+            groupBuyerActions.setVisibility(View.GONE);
+            groupSellerActions.setVisibility(View.VISIBLE);
+            buttonEditItem.setVisibility(View.GONE);
+            buttonViewOffers.setVisibility(View.GONE);
+        } else {
+            groupBuyerActions.setVisibility(View.GONE);
+            groupSellerActions.setVisibility(View.GONE);
         }
     }
 
