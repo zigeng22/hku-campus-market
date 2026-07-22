@@ -26,6 +26,15 @@
 | ENH-PROFILE-02 | DONE | Add profile/settings UI | Home exposes a profile control and a Java/XML settings screen for the account operations. |
 | ENH-QA-01 | DONE | Regression and demo acceptance | 49 instrumentation tests, Debug builds, and targeted API 36 manual flows pass. |
 
+### Enhancement Round 2 Scope
+
+| ID | Status | Requirement | Acceptance criteria |
+|---|---|---|---|
+| ENH-DEMO-02 | DONE | Enrich the public demo catalog | Demo contains 14 listings across 4 accounts; the six new listings do not require preset offers. |
+| ENH-ASSET-02 | DONE | Add six matching product images | Six new generated images are versioned, installed through MediaStore, and mapped to the new listings. |
+| ENH-DOC-02 | DONE | Add project structure and teammate testing guide | Chinese guide explains files, layers, flows, database, demo behavior, accounts, test cases, and modification entry points. |
+| ENH-QA-02 | DONE | Verify expanded catalog | Debug build and all 49 API 36 instrumentation tests pass with the 14-listing assertions. |
+
 ## 3. Implementation Decisions
 
 1. No database schema migration is planned. Existing users, items, offers, and trade transaction columns cover this scope.
@@ -72,6 +81,14 @@ Existing public model fields, Intent extra names, state constants, and database 
 - Corrected Offer date display by converting SQLite seconds to Java milliseconds.
 - Updated README and master-plan status for merged PR #11 and this enhancement round.
 
+### 2026-07-22 - Round 2 demo catalog and team guide
+
+- Expanded the catalog from 8 to 14 listings: Alice and Bob own 4 each; Carol and David own 3 each.
+- Added Statistics Revision Notes, USB-C Multiport Hub, Over-Ear Headphones, Compact Desk Fan, Three-Tier Storage Trolley, and Bicycle Helmet.
+- Kept the original Offer and confirmed-deal graph unchanged; the six new listings are catalog/search examples without required preset offers.
+- Added `7506_PROJECT_STRUCTURE_AND_TESTING_GUIDE.md`, including the explicit rule that Git distributes Seeder/assets but not each device's generated SQLite database.
+- Updated README and master-plan Demo descriptions to the 14-item baseline.
+
 ## 7. Demo Image Asset Manifest
 
 All assets were generated with the built-in OpenAI image generation tool as square, realistic, second-hand marketplace product photos with no people, logos, watermark, price labels, or legible brand text.
@@ -86,6 +103,12 @@ All assets were generated with the built-in OpenAI image generation tool as squa
 | `rice_cooker.png` | Compact white rice cooker |
 | `monitor_stand.png` | Bamboo desktop monitor stand |
 | `tennis_racket.png` | Red and black tennis racket with cover |
+| `statistics_notes.png` | Statistics revision-note binder |
+| `usb_c_hub.png` | Silver USB-C multiport hub |
+| `headphones.png` | Black over-ear headphones and case |
+| `desk_fan.png` | Mint-green compact desk fan |
+| `storage_trolley.png` | White three-tier storage trolley |
+| `bicycle_helmet.png` | Navy bicycle helmet |
 
 Workspace path: `Android_Studio_files/app/src/main/assets/demo_products/`.
 
@@ -97,6 +120,7 @@ Workspace path: `Android_Studio_files/app/src/main/assets/demo_products/`.
 - `:app:testDebugUnitTest`: PASS.
 - `:app:lintDebug`: PASS.
 - `git diff --check`: PASS before documentation closure.
-- MediaStore query: PASS; all eight named assets are present under `Pictures/HKU Campus Market/`.
+- MediaStore query: PASS for the Round 1 assets; the same installer path now covers all fourteen named assets.
+- Round 2 `:app:assembleDebug :app:connectedDebugAndroidTest`: PASS, 49/49 tests with 14-listing assertions.
 - API 36 manual visual checks: PASS for login/demo preparation, image-rich home, three bottom actions, red dot, My Listings numeric badge, account settings, sold buyer contact/delete, and Offer Accept/Reject row.
 - Database schema version remains 2; no migration was added.

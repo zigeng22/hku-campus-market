@@ -29,7 +29,9 @@ public final class DemoDataSeeder {
     private static final String[] IMAGE_ASSETS = {
             "java_textbook.png", "scientific_calculator.png", "wireless_keyboard.png",
             "desk_lamp.png", "office_chair.png", "rice_cooker.png",
-            "monitor_stand.png", "tennis_racket.png"
+            "monitor_stand.png", "tennis_racket.png", "statistics_notes.png",
+            "usb_c_hub.png", "headphones.png", "desk_fan.png",
+            "storage_trolley.png", "bicycle_helmet.png"
     };
 
     private DemoDataSeeder() {
@@ -72,9 +74,28 @@ public final class DemoDataSeeder {
         long racket = ensureItem(repository, david.getId(), "Tennis Racket with Cover",
                 "Beginner-friendly racket with a protective cover.", 14000,
                 AppContract.CATEGORY_OTHERS, images.get("tennis_racket.png"));
+        long statisticsNotes = ensureItem(repository, alice.getId(), "Statistics Revision Notes",
+                "Organised lecture notes with worked examples and exam summaries.", 6500,
+                AppContract.CATEGORY_BOOKS, images.get("statistics_notes.png"));
+        long usbHub = ensureItem(repository, alice.getId(), "USB-C Multiport Hub",
+                "Compact hub with HDMI, USB and card-reader ports.", 13000,
+                AppContract.CATEGORY_ELECTRONICS, images.get("usb_c_hub.png"));
+        long headphones = ensureItem(repository, bob.getId(), "Over-Ear Headphones",
+                "Comfortable wireless headphones with a protective case.", 22000,
+                AppContract.CATEGORY_ELECTRONICS, images.get("headphones.png"));
+        long fan = ensureItem(repository, bob.getId(), "Compact Desk Fan",
+                "Quiet fan with adjustable speed for a dorm study desk.", 7000,
+                AppContract.CATEGORY_DAILY_GOODS, images.get("desk_fan.png"));
+        long trolley = ensureItem(repository, carol.getId(), "Three-Tier Storage Trolley",
+                "Slim rolling trolley for books, snacks or bathroom supplies.", 16000,
+                AppContract.CATEGORY_FURNITURE, images.get("storage_trolley.png"));
+        long helmet = ensureItem(repository, david.getId(), "Bicycle Helmet",
+                "Lightweight adjustable helmet with minor signs of use.", 10000,
+                AppContract.CATEGORY_OTHERS, images.get("bicycle_helmet.png"));
 
         boolean ready = allItemsCreated(textbook, calculator, keyboard, lamp,
-                chair, cooker, stand, racket)
+                chair, cooker, stand, racket, statisticsNotes, usbHub,
+                headphones, fan, trolley, helmet)
                 && ensurePendingOffer(repository, textbook, bob.getId(), 10000)
                 && ensurePendingOffer(repository, keyboard, alice.getId(), 13000)
                 && ensurePendingOffer(repository, chair, david.getId(), 28000)
